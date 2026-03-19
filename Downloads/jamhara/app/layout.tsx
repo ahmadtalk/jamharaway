@@ -17,8 +17,8 @@ const ibm = IBM_Plex_Sans_Arabic({
 });
 
 export const metadata: Metadata = {
-  title: { default: "جمهرة | المعرفة الموثوقة", template: "%s | جمهرة" },
-  description: "منصة عربية للمعرفة المنظّمة والموثوقة",
+  title: { default: "جمهرة - قيمة المرء ما يعرفه", template: "%s | جمهرة" },
+  description: "منصة معرفية عربية توفر محتوى موثوقاً ومنظماً في العلوم والثقافة والفكر",
   keywords: ["معرفة", "علوم", "ثقافة", "jamhara"],
   icons: {
     icon: "/logo.png",

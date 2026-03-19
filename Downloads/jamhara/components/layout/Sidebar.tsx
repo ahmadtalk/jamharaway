@@ -38,7 +38,7 @@ const CAT_ICONS: Record<string, string> = {
 function Icon({ slug }: { slug: string }) {
   const d = CAT_ICONS[slug];
   return (
-    <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style={{ flexShrink: 0, opacity: .7 }}>
+    <svg width="19" height="19" viewBox="0 0 20 20" fill="currentColor" style={{ flexShrink: 0, opacity: .7 }}>
       {d ? <path d={d} /> : <circle cx="10" cy="10" r="4" />}
     </svg>
   );
@@ -128,7 +128,7 @@ export default function Sidebar({ categories }: Props) {
         href={locale === "en" ? "/en" : "/"}
         className={`nav-item ${isHome ? "active" : ""}`}
       >
-        <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style={{ flexShrink: 0, opacity: .7 }}>
+        <svg width="19" height="19" viewBox="0 0 20 20" fill="currentColor" style={{ flexShrink: 0, opacity: .7 }}>
           <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h3a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h3a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
         </svg>
         {locale === "ar" ? "الرئيسية" : "Home"}
@@ -139,7 +139,7 @@ export default function Sidebar({ categories }: Props) {
         href={locale === "en" ? "/en/sections" : "/sections"}
         className={`nav-item ${pathname.endsWith("/sections") ? "active" : ""}`}
       >
-        <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style={{ flexShrink: 0, opacity: .7 }}>
+        <svg width="19" height="19" viewBox="0 0 20 20" fill="currentColor" style={{ flexShrink: 0, opacity: .7 }}>
           <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
         </svg>
         {locale === "ar" ? "كل التصنيفات" : "All Sections"}
@@ -155,7 +155,7 @@ export default function Sidebar({ categories }: Props) {
             href={href}
             className={`nav-item ${isActivePath ? "active" : ""}`}
           >
-            <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style={{ flexShrink: 0, opacity: .7 }}>
+            <svg width="19" height="19" viewBox="0 0 20 20" fill="currentColor" style={{ flexShrink: 0, opacity: .7 }}>
               <path d={item.iconPath} />
             </svg>
             <span style={{ flex: 1 }}>{locale === "ar" ? item.labelAr : item.labelEn}</span>

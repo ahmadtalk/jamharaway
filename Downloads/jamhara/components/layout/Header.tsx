@@ -19,7 +19,22 @@ export default function Header() {
     <>
       {/* Topbar */}
       <div className="topbar">
-        جمهرة — المعرفة الموثوقة · يوميًا
+        <div className="topbar-inner">
+          {/* Slogan — center-ish (RTL: start side) */}
+          <span className="topbar-slogan">
+            {locale === "ar" ? "قيمة المرء ما يعرفه" : "Knowledge is your true value"}
+          </span>
+          {/* Nav links — left (RTL: end side) */}
+          <nav className="topbar-links">
+            <Link href={locale === "en" ? "/en/about" : "/about"} className="topbar-link">
+              {locale === "ar" ? "من نحن" : "About"}
+            </Link>
+            <span style={{ color: "rgba(255,255,255,.3)", fontSize: ".65rem" }}>|</span>
+            <Link href={locale === "en" ? "/en/contact" : "/contact"} className="topbar-link">
+              {locale === "ar" ? "اتصل بنا" : "Contact"}
+            </Link>
+          </nav>
+        </div>
       </div>
 
       {/* Main header */}

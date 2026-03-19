@@ -99,9 +99,35 @@ button, .nav-item, .badge, .rcard-title,
   height: 36px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  padding: 0 clamp(.75rem, 2vw, 1.25rem);
   letter-spacing: .01em;
 }
+.topbar-inner {
+  max-width: 1180px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.topbar-slogan {
+  font-family: var(--font-cairo), 'Cairo', sans-serif;
+  font-weight: 600;
+  letter-spacing: .02em;
+  opacity: .95;
+}
+.topbar-links {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.topbar-link {
+  color: rgba(255,255,255,.82);
+  text-decoration: none;
+  transition: color .15s;
+  font-size: .7rem;
+}
+.topbar-link:hover { color: #fff; }
 
 /* === Header === */
 .hdr {
@@ -289,11 +315,11 @@ button, .nav-item, .badge, .rcard-title,
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 9px 11px;
+  gap: 11px;
+  padding: 10px 12px;
   border-radius: 9px;
   color: var(--muted);
-  font-size: .88rem;
+  font-size: .93rem;
   font-weight: 500;
   transition: all .15s;
 }
@@ -571,8 +597,26 @@ button, .nav-item, .badge, .rcard-title,
 .sec-card-title:hover { color: var(--green); }
 
 /* === Footer === */
-.footer-link { color: rgba(255,255,255,.5); transition: color .15s; }
+.footer-link { color: rgba(255,255,255,.45); transition: color .15s; font-size: .78rem; }
 .footer-link:hover { color: var(--green); }
+.footer-section-title {
+  font-family: var(--font-cairo), 'Cairo', sans-serif;
+  font-weight: 700;
+  font-size: .8rem;
+  color: rgba(255,255,255,.65);
+  margin-bottom: .6rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.footer-divider {
+  height: 1px;
+  background: rgba(255,255,255,.08);
+  margin: 1.25rem 0;
+}
+.footer-copy {
+  font-size: .7rem;
+  color: rgba(255,255,255,.3);
+}
 
 /* === Toast === */
 .toast {
@@ -673,6 +717,7 @@ button, .nav-item, .badge, .rcard-title,
   .toast { bottom: max(76px, calc(64px + var(--sab))); }
 }
 @media (max-width: 640px) {
+  .topbar-links { display: none; }
   .hdr { height: 56px; }
   .hdr-logo { height: 36px; }
   .hdr-logo img { height: 36px; }
