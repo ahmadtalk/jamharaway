@@ -27,12 +27,12 @@ export default async function SectionsPage({ params }: Props) {
   const mainCats = allCats.filter((c) => !c.parent_id);
 
   return (
-    <div className="page-shell">
+    <div className="page-shell" style={{ display: "flex", flexDirection: "column", minHeight: "100dvh" }}>
       <Header />
-      <div className="main-wrap">
+      <div className="page" style={{ flex: 1 }}>
         <Sidebar categories={allCats} />
-        <main className="main-col">
-      <div style={{ padding: "2rem 0 5rem" }}>
+        <main>
+          <div style={{ paddingBottom: "3rem" }}>
         {/* Page title */}
         <div style={{ marginBottom: "2rem" }}>
           <h1 style={{
@@ -106,7 +106,7 @@ export default async function SectionsPage({ params }: Props) {
             );
           })}
         </div>
-      </div>
+          </div>
         </main>
         <RightPanel locale={locale} />
       </div>

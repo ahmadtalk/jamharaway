@@ -51,11 +51,11 @@ export default async function MostReadPage({ params }: Props) {
   const allPosts = (posts ?? []) as PostWithRelations[];
 
   return (
-    <div className="page-shell">
+    <div className="page-shell" style={{ display: "flex", flexDirection: "column", minHeight: "100dvh" }}>
       <Header />
-      <div className="main-wrap">
+      <div className="page" style={{ flex: 1 }}>
         <Sidebar categories={allCats} />
-        <main className="main-col">
+        <main>
           {/* Page heading */}
           <div
             style={{
@@ -113,7 +113,7 @@ export default async function MostReadPage({ params }: Props) {
             </div>
           )}
         </main>
-        <RightPanel locale={locale} />
+          <RightPanel locale={locale} />
       </div>
       <Footer locale={locale} />
       <MobileNav />
