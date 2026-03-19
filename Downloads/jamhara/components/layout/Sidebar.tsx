@@ -38,16 +38,24 @@ const CAT_ICONS: Record<string, string> = {
 function Icon({ slug }: { slug: string }) {
   const d = CAT_ICONS[slug];
   return (
-    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style={{ flexShrink: 0, opacity: .7 }}>
+    <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style={{ flexShrink: 0, opacity: .7 }}>
       {d ? <path d={d} /> : <circle cx="10" cy="10" r="4" />}
     </svg>
   );
 }
 
-// Special content-type links shown after الرئيسية / كل التصنيفات
-const CONTENT_TYPE_LINKS = [
+// SVG icon paths (viewBox 0 0 20 20, fill="currentColor")
+const CONTENT_TYPE_LINKS: {
+  iconPath: string;
+  labelAr: string;
+  labelEn: string;
+  href: string;
+  hrefEn: string;
+  hot: boolean;
+}[] = [
   {
-    emoji: "🔥",
+    // trending-up bars — الأكثر قراءة
+    iconPath: "M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z",
     labelAr: "الأكثر قراءة",
     labelEn: "Most Read",
     href: "/most-read",
@@ -55,7 +63,8 @@ const CONTENT_TYPE_LINKS = [
     hot: true,
   },
   {
-    emoji: "🎮",
+    // badge-check / quiz — العاب واختبارات
+    iconPath: "M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z",
     labelAr: "العاب واختبارات",
     labelEn: "Games & Quizzes",
     href: "/search?type=quiz",
@@ -63,7 +72,8 @@ const CONTENT_TYPE_LINKS = [
     hot: false,
   },
   {
-    emoji: "📊",
+    // chart / presentation — مخططات
+    iconPath: "M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z",
     labelAr: "مخططات",
     labelEn: "Charts",
     href: "/search?type=chart",
@@ -71,7 +81,8 @@ const CONTENT_TYPE_LINKS = [
     hot: false,
   },
   {
-    emoji: "⚔️",
+    // switch / compare arrows — مقارنات
+    iconPath: "M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z",
     labelAr: "مقارنات",
     labelEn: "Comparisons",
     href: "/search?type=comparison",
@@ -79,7 +90,8 @@ const CONTENT_TYPE_LINKS = [
     hot: false,
   },
   {
-    emoji: "✦",
+    // cursor / interactive — تفاعلي
+    iconPath: "M6.672 1.911a1 1 0 10-1.932.518l.259.966a1 1 0 001.932-.518l-.26-.966zM2.429 4.74a1 1 0 10-.518 1.932l.966.259a1 1 0 00.518-1.932l-.966-.26zm8.814-.569a1 1 0 00-1.415-1.414l-.707.707a1 1 0 101.415 1.415l.707-.708zm-7.071 7.072l.707-.707A1 1 0 003.465 9.12l-.708.707a1 1 0 001.415 1.415zm3.2-5.171a1 1 0 00-1.3 1.3l4 10a1 1 0 001.823.075l1.38-2.759 3.018 3.02a1 1 0 001.414-1.415l-3.019-3.02 2.76-1.379a1 1 0 00-.076-1.822l-10-4z",
     labelAr: "تفاعلي",
     labelEn: "Interactive",
     href: "/search?type=interactive",
@@ -115,9 +127,8 @@ export default function Sidebar({ categories }: Props) {
       <Link
         href={locale === "en" ? "/en" : "/"}
         className={`nav-item ${isHome ? "active" : ""}`}
-        style={{ fontSize: ".82rem" }}
       >
-        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style={{ flexShrink: 0, opacity: .7 }}>
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style={{ flexShrink: 0, opacity: .7 }}>
           <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h3a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h3a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
         </svg>
         {locale === "ar" ? "الرئيسية" : "Home"}
@@ -127,9 +138,8 @@ export default function Sidebar({ categories }: Props) {
       <Link
         href={locale === "en" ? "/en/sections" : "/sections"}
         className={`nav-item ${pathname.endsWith("/sections") ? "active" : ""}`}
-        style={{ fontSize: ".82rem" }}
       >
-        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style={{ flexShrink: 0, opacity: .7 }}>
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style={{ flexShrink: 0, opacity: .7 }}>
           <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
         </svg>
         {locale === "ar" ? "كل التصنيفات" : "All Sections"}
@@ -144,9 +154,10 @@ export default function Sidebar({ categories }: Props) {
             key={item.href}
             href={href}
             className={`nav-item ${isActivePath ? "active" : ""}`}
-            style={{ fontSize: ".82rem" }}
           >
-            <span style={{ fontSize: "1rem", lineHeight: 1, flexShrink: 0 }}>{item.emoji}</span>
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style={{ flexShrink: 0, opacity: .7 }}>
+              <path d={item.iconPath} />
+            </svg>
             <span style={{ flex: 1 }}>{locale === "ar" ? item.labelAr : item.labelEn}</span>
             {item.hot && (
               <span style={{
