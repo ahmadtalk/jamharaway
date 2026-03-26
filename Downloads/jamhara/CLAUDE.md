@@ -1115,7 +1115,32 @@ id, topic_normalized, topic_original, post_type, category_slug, post_id, generat
 برومبت بخطوات مرقّمة وفواصل ━━━ يدفع Haiku لمحاكاة التنسيق وإنتاج نص توضيحي بدل JSON.
 القاعدة: تعليمات الجودة تُدمج داخل وصف حقول JSON نفسها — لا خطوات منفصلة.
 
+### جلسة مارس 2026 — المجموعة التاسعة (ميزة الأخبار — GNews)
+
+**البنية الكاملة:**
+- [x] DB: `source_url TEXT` column + index + `posts_type_check` يشمل `'news'` + فئة `news` (slug, color #E05A2B, icon 📰)
+- [x] `lib/prompts/types/news.ts` — `buildNewsPrompt({ title, description, content, sourceName })` → JSON `{title_ar, body_ar}` فقط
+- [x] `app/api/generate-news/route.ts` — توليد يدوي: يجلب من GNews (lang=ar أولاً، MENA إنجليزي fallback)، يفحص source_url، يُعيد صياغة بـ Haiku (1200 tokens)
+- [x] `app/api/cron/fetch-news/route.ts` — كرون كل 15 دقيقة: 4 queries متوازية، dedup بـ source_url، max 6 مقالات per run
+- [x] `components/news/NewsCard.tsx` — صورة 16/9 + شارة المصدر + 5-line clamp في feed + رابط للمصدر في detail
+- [x] `app/[locale]/news/page.tsx` — صفحة قسم الأخبار (revalidate 60s)، hero أحمر مع badge "مباشر"
+- [x] PostCard + p/[id]/page.tsx + JCardShell + ALLOWED_APIS + TYPE_API: دعم نوع news
+- [x] GeneratePageClient: مجموعة "أخبار" (Group جديدة) + قالب "خبر"
+- [x] Sidebar: رابط "الأخبار" في QUICK_LINKS
+- [x] `lib/supabase/types.ts`: `NewsConfig` + `"news"` في Post.type union + ContentConfig
+- [x] `lib/prompts/index.ts`: تصدير `buildNewsPrompt`
+- [x] `GNEWS_API_KEY` مضبوط في Vercel env
+- [x] TypeScript ✓ — بدون أخطاء
+
+**GNews API:**
+- Key: `6f64bce4838846052ccde0426948a76b`
+- Endpoint أخبار عربية: `top-headlines?lang=ar&topic=politics/business`
+- Endpoint MENA إنجليزي: `search?q=Middle East OR Arab&lang=en`
+- Dedup: بـ `source_url` column في DB (لا trigram)
+- **⚠️ يجب ضبط cron-job.org لاستدعاء `/api/cron/fetch-news` كل 15 دقيقة**
+
 ### قيد الانتظار (مقترحات للمستقبل)
+- [ ] إعداد cron-job.org لـ /api/cron/fetch-news كل 15 دقيقة
 - [ ] إشعارات بريد عند فشل جدولة (Resend/SendGrid)
 - [ ] تحسين صفحة المنشور — تصميم أغنى + منشورات مقترحة ذكية
 - [ ] Analytics أعمق — أي أنواع المحتوى أكثر قراءة
@@ -1220,6 +1245,7 @@ git reset --hard ae79f0e
 |---|---|---|
 | `ae79f0e` | مارس 2026 | **قبل إعادة التصميم الكبرى** — 7 مجموعات كاملة |
 | `76b219d` | مارس 2026 | **المجموعة الثامنة** — dedup كامل + محرر البروفايل + برومبت v2.1 |
+| `a193e3c` | مارس 2026 | **المجموعة التاسعة** — ميزة الأخبار الكاملة (GNews + NewsCard + /news page) |
 
 ### محتوى `ae79f0e`
 - 18 نوع محتوى، 43 قالب، جميع الـ routes والمكونات
@@ -1239,4 +1265,4 @@ git reset --hard ae79f0e
 
 ---
 
-*آخر تحديث: مارس 2026 — المجموعة الثامنة: dedup كامل لـ 18 نوع + محرر البروفايل الكامل + برومبت البروفايل v2.1*
+*آخر تحديث: مارس 2026 — المجموعة التاسعة: ميزة الأخبار الكاملة — GNews + NewsCard + /news page + cron + DB*
