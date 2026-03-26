@@ -18,7 +18,7 @@ export default async function EditPostPage({ params }: PageProps) {
 
   const { data: post } = await supabase
     .from("posts")
-    .select("id, title_ar, title_en, body_ar, category_id, status, image_url")
+    .select("id, title_ar, title_en, body_ar, category_id, status, image_url, type, content_config")
     .eq("id", id)
     .single();
 
@@ -46,6 +46,9 @@ export default async function EditPostPage({ params }: PageProps) {
           category_id: post.category_id ?? null,
           status: post.status ?? "draft",
           image_url: (post as { image_url?: string | null }).image_url ?? null,
+          type: (post as { type?: string }).type ?? "article",
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          content_config: (post as { content_config?: any }).content_config ?? null,
         }}
         categories={(categories ?? []).map((c) => ({
           id: c.id,

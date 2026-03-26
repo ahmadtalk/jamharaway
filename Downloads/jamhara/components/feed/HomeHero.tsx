@@ -31,6 +31,11 @@ export default function HomeHero({ totalPosts, lastPublishedAt, locale }: Props)
     lastPublishedAt ? timeAgo(lastPublishedAt, isAr) : ""
   );
 
+  /* مزامنة فورية عند تغيّر lastPublishedAt (router.refresh) */
+  useEffect(() => {
+    if (lastPublishedAt) setTimeStr(timeAgo(lastPublishedAt, isAr));
+  }, [lastPublishedAt, isAr]);
+
   /* تحديث "منذ X" كل دقيقة */
   useEffect(() => {
     if (!lastPublishedAt) return;

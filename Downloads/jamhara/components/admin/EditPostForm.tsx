@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useToast, ToastContainer } from "@/components/admin/Toast";
+import { ProfileConfigEditor, ProfileConfig } from "@/components/admin/ProfileConfigEditor";
 
 interface Category {
   id: string;
@@ -18,6 +19,9 @@ interface Post {
   category_id: string | null;
   status: string;
   image_url: string | null;
+  type: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  content_config: any | null;
 }
 
 interface EditPostFormProps {
@@ -41,6 +45,11 @@ export function EditPostForm({ post, categories }: EditPostFormProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(post.image_url ?? null);
   const [imageLoading, setImageLoading] = useState(false);
 
+  // Profile config state
+  const [profileConfig, setProfileConfig] = useState<ProfileConfig | null>(
+    post.type === "profile" && post.content_config ? (post.content_config as ProfileConfig) : null
+  );
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!titleAr.trim()) {
@@ -49,17 +58,21 @@ export function EditPostForm({ post, categories }: EditPostFormProps) {
     }
     setSaving(true);
     try {
+      const body: Record<string, unknown> = {
+        id: post.id,
+        title_ar: titleAr,
+        title_en: titleEn || null,
+        body_ar: bodyAr || null,
+        category_id: categoryId || null,
+        status,
+      };
+      if (post.type === "profile" && profileConfig) {
+        body.content_config = profileConfig;
+      }
       const res = await fetch("/api/admin/posts/update", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id: post.id,
-          title_ar: titleAr,
-          title_en: titleEn || null,
-          body_ar: bodyAr || null,
-          category_id: categoryId || null,
-          status,
-        }),
+        body: JSON.stringify(body),
       });
       if (res.ok) {
         toast("تم حفظ التغييرات بنجاح", "success");
@@ -124,13 +137,11 @@ export function EditPostForm({ post, categories }: EditPostFormProps) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
     if (!file.type.startsWith("image/")) {
       toast("الملف المختار ليس صورة", "error");
       return;
     }
 
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       toast("حجم الصورة يجب أن يكون أقل من 5 ميغابايت", "error");
       return;
@@ -157,7 +168,6 @@ export function EditPostForm({ post, categories }: EditPostFormProps) {
       toast("حدث خطأ في الاتصال", "error");
     } finally {
       setImageLoading(false);
-      // Reset file input
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
   }
@@ -249,7 +259,6 @@ export function EditPostForm({ post, categories }: EditPostFormProps) {
           </div>
         )}
 
-        {/* Hidden file input */}
         <input
           ref={fileInputRef}
           type="file"
@@ -260,9 +269,9 @@ export function EditPostForm({ post, categories }: EditPostFormProps) {
       </div>
 
       <form onSubmit={handleSubmit}>
+        {/* ── Basic Fields ─────────────────────────── */}
         <div className="a-card" style={{ marginBottom: 20 }}>
           <div className="a-edit-grid">
-            {/* title_ar */}
             <div className="a-form-group full">
               <label className="a-label" htmlFor="title_ar">
                 العنوان بالعربية <span style={{ color: "#DC2626" }}>*</span>
@@ -277,7 +286,6 @@ export function EditPostForm({ post, categories }: EditPostFormProps) {
               />
             </div>
 
-            {/* title_en */}
             <div className="a-form-group full">
               <label className="a-label" htmlFor="title_en">
                 العنوان بالإنجليزية
@@ -291,21 +299,22 @@ export function EditPostForm({ post, categories }: EditPostFormProps) {
               />
             </div>
 
-            {/* body_ar */}
-            <div className="a-form-group full">
-              <label className="a-label" htmlFor="body_ar">
-                المحتوى بالعربية
-              </label>
-              <textarea
-                id="body_ar"
-                className="a-textarea tall"
-                value={bodyAr}
-                onChange={(e) => setBodyAr(e.target.value)}
-                rows={10}
-              />
-            </div>
+            {/* body_ar — hidden for profile (content lives in content_config) */}
+            {post.type !== "profile" && (
+              <div className="a-form-group full">
+                <label className="a-label" htmlFor="body_ar">
+                  المحتوى بالعربية
+                </label>
+                <textarea
+                  id="body_ar"
+                  className="a-textarea tall"
+                  value={bodyAr}
+                  onChange={(e) => setBodyAr(e.target.value)}
+                  rows={10}
+                />
+              </div>
+            )}
 
-            {/* category_id */}
             <div className="a-form-group">
               <label className="a-label" htmlFor="category_id">
                 القسم
@@ -325,7 +334,6 @@ export function EditPostForm({ post, categories }: EditPostFormProps) {
               </select>
             </div>
 
-            {/* status */}
             <div className="a-form-group">
               <label className="a-label">الحالة</label>
               <div className="a-status-toggle">
@@ -348,7 +356,24 @@ export function EditPostForm({ post, categories }: EditPostFormProps) {
           </div>
         </div>
 
-        {/* Actions */}
+        {/* ── Profile Config Editor ─────────────────── */}
+        {post.type === "profile" && profileConfig && (
+          <div style={{ marginBottom: 20 }}>
+            <p style={{
+              fontWeight: 700, fontSize: ".82rem", color: "#7B5EA7",
+              textTransform: "uppercase", letterSpacing: ".06em",
+              marginBottom: 12, display: "flex", alignItems: "center", gap: 6,
+            }}>
+              <span style={{ background: "#7B5EA722", padding: "2px 10px", borderRadius: 20 }}>🪪 بيانات البروفايل</span>
+            </p>
+            <ProfileConfigEditor
+              config={profileConfig}
+              onChange={setProfileConfig}
+            />
+          </div>
+        )}
+
+        {/* ── Actions ──────────────────────────────── */}
         <div style={{ display: "flex", gap: 10 }}>
           <button type="submit" className="a-btn" disabled={saving}>
             {saving ? "جارٍ الحفظ..." : "حفظ التغييرات"}

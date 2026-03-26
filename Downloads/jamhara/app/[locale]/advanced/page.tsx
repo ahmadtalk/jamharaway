@@ -52,32 +52,41 @@ export default async function AdvancedPage({ params }: Props) {
   const isAr = locale === "ar";
   const supabase = await createClient();
 
-  const [{ data: posts }, { data: categories }] = await Promise.all([
+  const [{ data: posts, count: trueTotal }, { data: categories }, ...typeCounts] = await Promise.all([
     supabase
       .from("posts")
       .select(
         `*, type, chart_config, quiz_config, comparison_config, content_config,
          category:categories!posts_category_id_fkey(*),
          subcategory:categories!posts_subcategory_id_fkey(*),
-         source:sources(*)`
+         source:sources(*)`,
+        { count: "exact" }
       )
       .eq("status", "published")
       .in("type", [...ADVANCED_TYPES])
       .order("published_at", { ascending: false })
-      .limit(50),
+      .limit(200),
     supabase.from("categories").select("*").eq("is_active", true).order("sort_order"),
+    // عدد حقيقي لكل نوع من DB
+    ...ADVANCED_TYPES.map((t) =>
+      supabase
+        .from("posts")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "published")
+        .eq("type", t)
+    ),
   ]);
 
   const allCats = (categories ?? []) as Category[];
   const allPosts = (posts ?? []) as PostWithRelations[];
 
-  // تجميع المنشورات حسب النوع
-  const byType = ADVANCED_TYPES.reduce((acc, t) => {
-    acc[t] = allPosts.filter((p) => p.type === t);
+  // عدد حقيقي لكل نوع (من DB مباشرة)
+  const trueByTypeCount = ADVANCED_TYPES.reduce((acc, t, i) => {
+    acc[t] = (typeCounts[i] as { count: number | null }).count ?? 0;
     return acc;
-  }, {} as Record<string, PostWithRelations[]>);
+  }, {} as Record<string, number>);
 
-  const totalCount = allPosts.length;
+  const totalCount = trueTotal ?? allPosts.length;
 
   return (
     <div className="page-shell" style={{ display: "flex", flexDirection: "column", minHeight: "100dvh" }}>
@@ -123,7 +132,7 @@ export default async function AdvancedPage({ params }: Props) {
             <div style={{
               display: "flex", gap: 6, flexWrap: "wrap", marginTop: 14,
             }}>
-              {ADVANCED_TYPES.filter((t) => byType[t].length > 0).map((t) => {
+              {ADVANCED_TYPES.filter((t) => trueByTypeCount[t] > 0).map((t) => {
                 const m = TYPE_META[t];
                 return (
                   <Link
@@ -143,7 +152,7 @@ export default async function AdvancedPage({ params }: Props) {
                       background: m.color + "22", borderRadius: 100,
                       padding: "0 5px", fontSize: ".65rem",
                     }}>
-                      {byType[t].length}
+                      {trueByTypeCount[t]}
                     </span>
                   </Link>
                 );

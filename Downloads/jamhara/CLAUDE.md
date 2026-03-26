@@ -1087,6 +1087,34 @@ id, topic_normalized, topic_original, post_type, category_slug, post_id, generat
 -- check_topic_duplicate() RPC — p_topic, p_post_type, p_category_slug, p_days_back, p_threshold
 ```
 
+### جلسة مارس 2026 — المجموعة الثامنة (dedup كامل + تعديل البروفايل + تطوير البرومبت)
+
+**تعميم نظام منع التكرار على جميع الأنواع:**
+- [x] 16 route كانت تفتقد Layer 2a و Layer 3 — أُضيفت لجميعها
+- [x] الآن: جميع الـ 18 نوع لديها checkTopicDuplicate + getRecentTopics + registerTopic
+- [x] recentTopicsBlock يُلحق بنهاية promptText/prompt في كل route تلقائياً
+
+**تعديل البروفايل في لوحة التحكم (محرر كامل):**
+- [x] `components/admin/ProfileConfigEditor.tsx` — مكوّن جديد بـ 6 أقسام قابلة للفتح/الإغلاق:
+  - المعلومات الأساسية: subject_type، الأسماء، tagline، avatar_emoji، avatar_color (color picker)، image_url، المصدر
+  - الحقائق السريعة: إضافة/حذف/تعديل كل حقيقة (أيقونة، تسمية ع/en، قيمة ع/en)
+  - الإحصائيات البارزة: إضافة/حذف/تعديل (أيقونة، تسمية، قيمة، وحدة)
+  - خط الزمن: إضافة/حذف/تعديل (سنة، حدث ع/en، نوع: milestone/award/crisis/founding/death)
+  - الأقسام التفصيلية: إضافة/حذف/تعديل (عنوان + محتوى ع/en)
+  - الوسوم: tags_ar وtags_en (مفصولة بفواصل)
+- [x] `components/admin/EditPostForm.tsx` — يكتشف `post.type === "profile"` ويُظهر ProfileConfigEditor
+- [x] `app/admin/posts/[id]/page.tsx` — يجلب `type` و`content_config` من DB
+- [x] `app/api/admin/posts/update/route.ts` — يقبل ويحفظ `content_config`
+
+**تطوير برومبت البروفايل (v2.1):**
+- [x] v2.0: سبب النشر الآن (آخر 90 يوماً) + فورمولا tagline + قواعد sections (60-100 كلمة + رقم إلزامي) + قسم الجدل الإلزامي + quick_facts مفاجئة + avatar_color ذكي بحسب subject_type
+- [x] v2.1: إصلاح هيكل البرومبت — حذف الخطوات المتعددة مع ━━━ (كانت تُنتج نصاً قبل JSON) → هيكل مسطّح موثوق
+- [x] quick_facts: هيكل هجين — 3 حقائق هوية أساسية (ميلاد/جنسية/منصب) + 1-2 مفاجئة — كل قيمة ≤ 7 كلمات
+
+**ملاحظة مهمة — سبب فشل الهيكل متعدد الخطوات:**
+برومبت بخطوات مرقّمة وفواصل ━━━ يدفع Haiku لمحاكاة التنسيق وإنتاج نص توضيحي بدل JSON.
+القاعدة: تعليمات الجودة تُدمج داخل وصف حقول JSON نفسها — لا خطوات منفصلة.
+
 ### قيد الانتظار (مقترحات للمستقبل)
 - [ ] إشعارات بريد عند فشل جدولة (Resend/SendGrid)
 - [ ] تحسين صفحة المنشور — تصميم أغنى + منشورات مقترحة ذكية
@@ -1094,8 +1122,9 @@ id, topic_normalized, topic_original, post_type, category_slug, post_id, generat
 - [ ] معاينة سريعة في جدول المنشورات بالأدمن
 - [ ] فلترة متقدمة في جدول المنشورات (بالنوع)
 - [ ] قراءة sources من tool_result blocks مباشرة بدل JSON self-report (دقة أعلى)
-- [ ] تطبيق Context Injection (Layer 3) على بقية أنواع المحتوى
+- [ ] تطبيق Context Injection (Layer 3) على بقية برومبتات الأنواع (حالياً مُلحق كنص في route فقط)
 - [ ] لوحة في Admin لعرض topic_registry مع إمكانية الحذف اليدوي
+- [ ] محرر كامل لأنواع المحتوى الأخرى (briefing، quotes، debate...) على غرار ProfileConfigEditor
 
 ---
 
@@ -1132,7 +1161,9 @@ id, topic_normalized, topic_original, post_type, category_slug, post_id, generat
     │     ← إذا isDuplicate → HTTP 409 + تفاصيل المنشور المشابه
     │
     ├── Layer 3 (في البرومبت): getRecentTopics() → recentTopics[]
-    │     ← يُحقن في buildArticlePrompt كـ "لا تكرر هذه المواضيع"
+    │     ← يُحقن في جميع 18 route كـ recentTopicsBlock يُلحق بنهاية البرومبت
+    │     ← buildArticlePrompt و buildProfilePrompt يدعمانه داخلياً
+    │     ← باقي الـ 16 نوع: يُلحق recentTopicsBlock بعد buildXPrompt() في الـ route مباشرة
     │
     └── Layer 2b (بعد الحفظ): registerTopic()
           ← يُسجّل title_ar في topic_registry دائماً
@@ -1169,12 +1200,43 @@ SIMILARITY_THRESHOLD — عتبة التشابه لكل نوع (0.30-0.40)
 كل استدعاء لـ dedup مُغلَّف بـ try/catch ويُعيد false عند الخطأ.
 **خطأ في dedup لا يوقف التوليد أبداً.**
 
-## 23. ملفات التوثيق
+## 23. نقاط الاستعادة (Restore Points)
+
+### كيفية العودة إلى نقطة استعادة
+```bash
+# عرض كل نقاط الاستعادة
+git log --oneline | grep "restore-point"
+
+# العودة لملف محدد من نقطة استعادة
+git checkout ae79f0e -- app/[locale]/page.tsx
+
+# العودة الكاملة (خطير — يحذف التغييرات الحالية)
+git reset --hard ae79f0e
+```
+
+### نقاط الاستعادة المتاحة
+
+| الـ hash | التاريخ | الوصف |
+|---|---|---|
+| `ae79f0e` | مارس 2026 | **قبل إعادة التصميم الكبرى** — 7 مجموعات كاملة |
+| _(الجديدة)_ | مارس 2026 | **المجموعة الثامنة** — dedup كامل + محرر البروفايل + برومبت v2.1 |
+
+### محتوى `ae79f0e`
+- 18 نوع محتوى، 43 قالب، جميع الـ routes والمكونات
+- نظام الجدولة الديناميكية الكامل
+- نظام منع التكرار (3 طبقات: topic_registry + pg_trgm)
+- HomeHero، صفحة our-dna، برومبت المقالة v3.0
+- lib/dedup، lib/ai-config، lib/json-utils، lib/prompts
+
+---
+
+## 24. ملفات التوثيق
 
 - `CLAUDE.md` — هذا الملف (للذكاء الاصطناعي)
 - `DOCS.md` — توثيق للمشروع (للبشر)
 - `/admin/diagnostics` — فحص صحة المشروع في الإنتاج (20+ فحص)
+- `~/.claude/projects/memory/` — ذاكرة الجلسات (project_state، feedback، user_profile)
 
 ---
 
-*آخر تحديث: مارس 2026 — المجموعة السابعة (نظام منع التكرار: topic_registry + pg_trgm + 3 طبقات)*
+*آخر تحديث: مارس 2026 — المجموعة الثامنة: dedup كامل لـ 18 نوع + محرر البروفايل الكامل + برومبت البروفايل v2.1*

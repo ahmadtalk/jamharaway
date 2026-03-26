@@ -8,12 +8,16 @@ export async function PUT(req: NextRequest) {
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { id, title_ar, title_en, body_ar, category_id, status } = await req.json();
+  const { id, title_ar, title_en, body_ar, category_id, status, content_config } = await req.json();
   if (!id || !title_ar) return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const updatePayload: Record<string, any> = { title_ar, title_en, body_ar, category_id, status };
+  if (content_config !== undefined) updatePayload.content_config = content_config;
 
   const { error } = await supabase
     .from("posts")
-    .update({ title_ar, title_en, body_ar, category_id, status })
+    .update(updatePayload)
     .eq("id", id);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });

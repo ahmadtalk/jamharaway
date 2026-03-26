@@ -5,7 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import type { ComparisonType } from "@/lib/supabase/types";
 import { buildComparisonPrompt } from "@/lib/prompts";
 import { extractJSON } from "@/lib/json-utils";
-import { registerTopic } from "@/lib/dedup";
+import { checkTopicDuplicate, registerTopic, getRecentTopics } from "@/lib/dedup";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 export const maxDuration = 60;
@@ -48,11 +48,27 @@ export async function POST(req: NextRequest) {
   if (!category)
     return NextResponse.json({ error: `Category not found: ${category_slug}` }, { status: 400 });
   const effectiveTopic = topic?.trim() || `اختر موضوعاً مناسباً من قسم ${category.name_ar}`;
+  // Layer 2a — فحص التكرار عندما يُوفَّر topic صريح
+  if (topic?.trim()) {
+    const dupCheck = await checkTopicDuplicate(topic.trim(), "comparison", category_slug);
+    if (dupCheck.isDuplicate) {
+      return NextResponse.json({
+        error: "duplicate_topic",
+        message: `محتوى مشابه موجود بالفعل: "${dupCheck.similarTopic}" (منذ ${dupCheck.daysAgo} يوم)`,
+        similarPostId: dupCheck.similarPostId,
+      }, { status: 409 });
+    }
+  }
+  // Layer 3 — جلب المواضيع الأخيرة لمنع التكرار في البرومبت
+  const recentTopics = await getRecentTopics(category_slug, "comparison", 15, 30);
+  const recentTopicsBlock = recentTopics.length > 0
+    ? `\n\n⚠️ لا تكرر هذه المواضيع (كُتبت مؤخراً في نفس التصنيف):\n${recentTopics.map((t: string) => `- ${t}`).join("\n")}`
+    : "";
   const promptText = buildComparisonPrompt({
     topic: effectiveTopic,
     categorySlug: category_slug,
     comparisonType: comparison_type,
-  });
+  }) + recentTopicsBlock;
   try {
     let resultText = "";
     if (use_web_search) {

@@ -4,7 +4,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { buildNetworkPrompt } from "@/lib/prompts";
 import { extractJSON } from "@/lib/json-utils";
-import { registerTopic } from "@/lib/dedup";
+import { checkTopicDuplicate, registerTopic, getRecentTopics } from "@/lib/dedup";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 export const maxDuration = 60;
@@ -23,10 +23,26 @@ export async function POST(req: NextRequest) {
   const { data: cat } = await supabase.from("categories").select("id, name_ar").eq("slug", category_slug).single();
   if (!cat) return NextResponse.json({ error: `Category not found: ${category_slug}` }, { status: 400 });
   const effectiveTopic = topic?.trim() || `اختر شخصية أو جهة بارزة من قسم ${cat.name_ar} وارسم خريطة علاقاتها`;
+  // Layer 2a — فحص التكرار عندما يُوفَّر topic صريح
+  if (topic?.trim()) {
+    const dupCheck = await checkTopicDuplicate(topic.trim(), "network", category_slug);
+    if (dupCheck.isDuplicate) {
+      return NextResponse.json({
+        error: "duplicate_topic",
+        message: `محتوى مشابه موجود بالفعل: "${dupCheck.similarTopic}" (منذ ${dupCheck.daysAgo} يوم)`,
+        similarPostId: dupCheck.similarPostId,
+      }, { status: 409 });
+    }
+  }
+  // Layer 3 — جلب المواضيع الأخيرة لمنع التكرار في البرومبت
+  const recentTopics = await getRecentTopics(category_slug, "network", 15, 30);
+  const recentTopicsBlock = recentTopics.length > 0
+    ? `\n\n⚠️ لا تكرر هذه المواضيع (كُتبت مؤخراً في نفس التصنيف):\n${recentTopics.map((t: string) => `- ${t}`).join("\n")}`
+    : "";
   const promptText = buildNetworkPrompt({
     topic: effectiveTopic,
     categoryName: cat.name_ar,
-  });
+  }) + recentTopicsBlock;
   try {
     let resultText = "";
     if (use_web_search) {

@@ -9,7 +9,7 @@ import HomeHero from "@/components/feed/HomeHero";
 import type { PostWithRelations, Category } from "@/lib/supabase/types";
 import type { Metadata } from "next";
 
-export const revalidate = 60;
+export const revalidate = 30;
 
 export async function generateMetadata({
   params,

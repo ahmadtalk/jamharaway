@@ -4,7 +4,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { QuizType } from "@/lib/supabase/types";
 import { buildQuizPrompt } from "@/lib/prompts";
-import { registerTopic } from "@/lib/dedup";
+import { checkTopicDuplicate, registerTopic, getRecentTopics } from "@/lib/dedup";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 function isAuthorized(req: NextRequest) {
@@ -73,6 +73,22 @@ export async function POST(req: NextRequest) {
   const { data: cat } = await supabase.from("categories").select("*").eq("slug", category_slug).single();
   if (!cat) return NextResponse.json({ error: "Category not found" }, { status: 404 });
   const effectiveTopic = topic?.trim() || `اختر موضوعاً مناسباً من قسم ${cat.name_ar}`;
+  // Layer 2a — فحص التكرار عندما يُوفَّر topic صريح
+  if (topic?.trim()) {
+    const dupCheck = await checkTopicDuplicate(topic.trim(), "quiz", category_slug);
+    if (dupCheck.isDuplicate) {
+      return NextResponse.json({
+        error: "duplicate_topic",
+        message: `محتوى مشابه موجود بالفعل: "${dupCheck.similarTopic}" (منذ ${dupCheck.daysAgo} يوم)`,
+        similarPostId: dupCheck.similarPostId,
+      }, { status: 409 });
+    }
+  }
+  // Layer 3 — جلب المواضيع الأخيرة لمنع التكرار في البرومبت
+  const recentTopics = await getRecentTopics(category_slug, "quiz", 15, 30);
+  const recentTopicsBlock = recentTopics.length > 0
+    ? `\n\n⚠️ لا تكرر هذه المواضيع (كُتبت مؤخراً في نفس التصنيف):\n${recentTopics.map((t: string) => `- ${t}`).join("\n")}`
+    : "";
   const difficultyLabel = difficulty === "easy" ? "سهل" : difficulty === "hard" ? "صعب" : "متوسط";
   const difficultyEn = difficulty ?? "medium";
   const prompt = buildQuizPrompt({
@@ -81,7 +97,7 @@ export async function POST(req: NextRequest) {
     difficulty: difficultyLabel,
     difficultyEn,
     quizType,
-  });
+  }) + recentTopicsBlock;
   let raw = "";
   try {
     if (use_web_search) {

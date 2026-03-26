@@ -61,24 +61,26 @@ export default async function TypePage({ params }: Props) {
   const isAr = locale === "ar";
   const supabase = await createClient();
 
-  const [{ data: posts }, { data: categories }] = await Promise.all([
+  const [{ data: posts, count: trueCount }, { data: categories }] = await Promise.all([
     supabase
       .from("posts")
       .select(
         `*, type, chart_config, quiz_config, comparison_config, content_config,
          category:categories!posts_category_id_fkey(*),
          subcategory:categories!posts_subcategory_id_fkey(*),
-         source:sources(*)`
+         source:sources(*)`,
+        { count: "exact" }
       )
       .eq("status", "published")
       .eq("type", type)
       .order("published_at", { ascending: false })
-      .limit(30),
+      .limit(100),
     supabase.from("categories").select("*").eq("is_active", true).order("sort_order"),
   ]);
 
   const allCats = (categories ?? []) as Category[];
   const typePosts = (posts ?? []) as PostWithRelations[];
+  const totalCount = trueCount ?? typePosts.length;
   const name = isAr ? info.nameAr : info.nameEn;
   const desc = isAr ? info.descAr : info.descEn;
 
@@ -111,7 +113,7 @@ export default async function TypePage({ params }: Props) {
                 border: `1px solid ${info.color}30`,
                 padding: "2px 10px", borderRadius: 100, fontWeight: 600,
               }}>
-                {typePosts.length} {isAr ? "منشور" : "posts"}
+                {totalCount.toLocaleString("en")} {isAr ? "منشور" : "posts"}
               </span>
             </div>
             <p style={{
