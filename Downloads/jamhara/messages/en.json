@@ -1,0 +1,30 @@
+{
+  "site": {
+    "name": "Jamhara",
+    "tagline": "Reliable Knowledge",
+    "description": "An Arabic platform for structured, reliable knowledge"
+  },
+  "nav": {
+    "home": "Home",
+    "latest": "Latest",
+    "popular": "Most Popular",
+    "categories": "Categories",
+    "search": "Search Jamhara..."
+  },
+  "post": {
+    "like": "Like",
+    "share": "Share",
+    "copied": "Link copied",
+    "readMore": "Read more",
+    "source": "Source",
+    "relatedPosts": "Related Posts"
+  },
+  "feed": {
+    "empty": "No posts yet",
+    "loading": "Loading..."
+  },
+  "category": {
+    "posts": "post",
+    "allPosts": "All Posts"
+  }
+}

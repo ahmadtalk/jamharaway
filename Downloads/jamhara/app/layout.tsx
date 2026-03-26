@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cairo, IBM_Plex_Sans_Arabic } from "next/font/google";
+import { Cairo, IBM_Plex_Sans_Arabic, Rubik } from "next/font/google";
 import "./globals.css";
 
 const cairo = Cairo({
@@ -10,9 +10,16 @@ const cairo = Cairo({
 });
 
 const ibm = IBM_Plex_Sans_Arabic({
-  subsets: ["arabic"],
+  subsets: ["arabic", "latin"],
   weight: ["300", "400", "500", "600"],
   variable: "--font-ibm",
+  display: "swap",
+});
+
+const rubik = Rubik({
+  subsets: ["arabic", "latin"],
+  weight: ["700", "800", "900"],
+  variable: "--font-rubik",
   display: "swap",
 });
 
@@ -40,8 +47,8 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html suppressHydrationWarning>
-      <body className={`${cairo.variable} ${ibm.variable}`}>{children}</body>
+    <html suppressHydrationWarning className={`${cairo.variable} ${ibm.variable} ${rubik.variable}`}>
+      <body>{children}</body>
     </html>
   );
 }

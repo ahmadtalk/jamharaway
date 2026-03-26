@@ -1,47 +1,42 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { timeAgo } from "@/lib/utils";
 
 interface Props { locale: string; }
 
-// Post type → SVG path (viewBox 0 0 20 20)
-const TYPE_ICON: Record<string, string> = {
-  article:    "M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z",
-  quiz:       "M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z",
-  chart:      "M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z",
-  comparison: "M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z",
-  timeline:   "M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z",
-  ranking:    "M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z",
-  numbers:    "M7 3a1 1 0 000 2h6a1 1 0 000-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z",
-  factcheck:  "M9 2a1 1 0 000 2h2a1 1 0 100-2H9z M4 5a2 2 0 012-2 3 3 0 006 0 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z",
-  scenarios:  "M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z",
+// ── أيقونات التصنيفات — نفس نمط Sidebar (stroke SVG في مربع ملوّن) ──
+// viewBox: 0 0 24 24 | fill: none | stroke | strokeWidth: 2 | strokeLinecap/Linejoin: round
+const CAT_SVG: Record<string, { d: string; d2?: string }> = {
+  "politics":               { d: "M3 21h18M5 21V7l7-5 7 5v14M9 21v-6h6v6" },
+  "economics-and-business": { d: "M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" },
+  "society":                { d: "M17 20H7m10 0a3 3 0 003-3v0a5 5 0 00-5-5H8a5 5 0 00-5 5v0a3 3 0 003 3m10 0v1m-10 0v-1", d2: "M12 10a4 4 0 100-8 4 4 0 000 8z" },
+  "religions":              { d: "M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" },
+  "technology":             { d: "M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" },
+  "history":                { d: "M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" },
+  "geography":              { d: "M12 2a10 10 0 100 20A10 10 0 0012 2z", d2: "M2 12h20M12 2c-2.76 0-5 4.48-5 10s2.24 10 5 10 5-4.48 5-10S14.76 2 12 2z" },
+  "sciences":               { d: "M9 3v7.5L4 18h16l-5-7.5V3M6 3h12" },
+  "medicine-and-health":    { d: "M9 12h6m-3-3v6", d2: "M12 22a10 10 0 100-20 10 10 0 000 20z" },
+  "humanities":             { d: "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" },
+  "lifestyle":              { d: "M12 3v1m0 16v1M4.22 4.22l.707.707m12.727 12.727l.707.707M1 12h1m18 0h1M4.22 19.78l.707-.707M18.364 5.636l.707-.707", d2: "M16 12a4 4 0 11-8 0 4 4 0 018 0z" },
+  "culture":                { d: "M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" },
+  "sports":                 { d: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" },
+  "misc":                   { d: "M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" },
 };
-
-// Card title row with SVG icon
-function CardTitle({ iconPath, label }: { iconPath: string; label: string }) {
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: ".7rem" }}>
-      <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"
-        style={{ flexShrink: 0, color: "var(--green)", opacity: .85 }}>
-        <path d={iconPath} />
-      </svg>
-      <p style={{
-        fontFamily: "var(--font-cairo), 'Cairo', sans-serif",
-        fontWeight: 700,
-        fontSize: ".8rem",
-        color: "var(--ink)",
-        margin: 0,
-      }}>
-        {label}
-      </p>
-    </div>
-  );
-}
 
 export default async function RightPanel({ locale }: Props) {
   const supabase = await createClient();
   const isAr = locale === "ar";
 
+  // جلب التصنيفات النشطة
+  const { data: cats } = await supabase
+    .from("categories")
+    .select("id, name_ar, name_en, slug, color, icon, post_count")
+    .eq("is_active", true)
+    .is("parent_id", null)
+    .order("sort_order");
+
+  const categories = cats ?? [];
+
+  /* ── محجوز لإعادة التفعيل لاحقاً ──────────────────────────────────────
   const [
     { count: postCount },
     { count: catCount },
@@ -52,153 +47,132 @@ export default async function RightPanel({ locale }: Props) {
     supabase.from("posts").select("*", { count: "exact", head: true }).eq("status", "published"),
     supabase.from("categories").select("*", { count: "exact", head: true }).is("parent_id", null),
     supabase.from("generation_jobs").select("*", { count: "exact", head: true }).eq("status", "done"),
-    supabase
-      .from("posts")
-      .select("id, title_ar, title_en, type, view_count, category:categories!posts_category_id_fkey(slug, color)")
-      .eq("status", "published")
-      .order("view_count", { ascending: false })
-      .limit(5),
-    supabase
-      .from("posts")
-      .select("id, title_ar, title_en, type, published_at, category:categories!posts_category_id_fkey(slug, color, name_ar, name_en)")
-      .eq("status", "published")
-      .order("published_at", { ascending: false })
-      .limit(3),
+    supabase.from("posts").select("id, title_ar, title_en, type, view_count, category:categories!posts_category_id_fkey(slug, color)").eq("status", "published").order("view_count", { ascending: false }).limit(5),
+    supabase.from("posts").select("id, title_ar, title_en, type, published_at, category:categories!posts_category_id_fkey(slug, color, name_ar, name_en)").eq("status", "published").order("published_at", { ascending: false }).limit(3),
   ]);
-
-  // Rank badge colors
-  const RANK_COLORS = ["#E8534A", "#E07B2A", "#C9A820", "#4CB36C", "#5B8DEF"];
+  ──────────────────────────────────────────────────────────────────────── */
 
   return (
     <aside className="rpanel">
 
-      {/* Stats card */}
+      {/* ── التصنيفات ─────────────────────────────────────────────────── */}
       <div className="rcard">
-        <CardTitle
-          iconPath="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"
-          label={isAr ? "إحصائيات جمهرة" : "Jamhara Stats"}
-        />
-        <div className="stats-grid">
-          <div className="stat-box">
-            <div className="stat-num" style={{ fontSize: "1.3rem" }}>{postCount ?? 0}</div>
-            <div className="stat-lbl">{isAr ? "منشور" : "Posts"}</div>
+        {/* Header */}
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          marginBottom: "1rem", paddingBottom: ".5rem",
+          borderBottom: "1px solid var(--slate)",
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{
+              width: 26, height: 26, borderRadius: 7,
+              background: "var(--green-light)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}>
+              <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor" style={{ color: "var(--green-deep)" }}>
+                <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
+            </span>
+            <p style={{
+              fontFamily: "var(--font-cairo), 'Cairo', sans-serif",
+              fontWeight: 700, fontSize: ".85rem",
+              color: "var(--ink)", margin: 0,
+            }}>
+              {isAr ? "تصنيفات جمهرة" : "Jamhara Sections"}
+            </p>
           </div>
-          <div className="stat-box">
-            <div className="stat-num" style={{ fontSize: "1.3rem" }}>{catCount ?? 0}</div>
-            <div className="stat-lbl">{isAr ? "قسم معرفي" : "Sections"}</div>
-          </div>
-          <div className="stat-box">
-            <div className="stat-num" style={{ fontSize: "1.3rem" }}>{jobCount ?? 0}</div>
-            <div className="stat-lbl">{isAr ? "جلسة توليد" : "AI Sessions"}</div>
-          </div>
-          <div className="stat-box">
-            <div className="stat-num" style={{ fontSize: "1.3rem" }}>24</div>
-            <div className="stat-lbl">{isAr ? "تخصص" : "Disciplines"}</div>
-          </div>
+          <Link
+            href={isAr ? "/sections" : "/en/sections"}
+            style={{ fontSize: ".72rem", color: "var(--green-deep)", fontWeight: 600, textDecoration: "none" }}
+          >
+            {isAr ? "الكل" : "All"}
+          </Link>
         </div>
-      </div>
 
-      {/* Most read card */}
-      {topPosts && topPosts.length > 0 && (
-        <div className="rcard">
-          <CardTitle
-            iconPath="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z"
-            label={isAr ? "الأكثر قراءة" : "Most Read"}
-          />
-          {topPosts.map((post, i) => {
-            const title = isAr ? post.title_ar : post.title_en;
-            const href = locale === "en" ? `/en/p/${post.id}` : `/p/${post.id}`;
-            const rankColor = RANK_COLORS[i] ?? "#7A7F99";
-            const cat = (Array.isArray(post.category) ? post.category[0] : post.category) as { slug: string; color: string } | null;
+        {/* قائمة التصنيفات */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
+          {categories.map((cat) => {
+            const name = isAr ? cat.name_ar : (cat.name_en ?? cat.name_ar);
+            const href = isAr ? `/${cat.slug}` : `/en/${cat.slug}`;
+            const svgIcon = CAT_SVG[cat.slug];
+            const color  = cat.color ?? "#4CB36C";
+            const bg     = color + "15";
             return (
               <Link
-                key={post.id}
+                key={cat.id}
                 href={href}
-                className="trow"
-                style={{ textDecoration: "none", alignItems: "flex-start" }}
-              >
-                <span style={{
-                  width: 20, height: 20, minWidth: 20,
-                  borderRadius: "50%",
-                  background: rankColor,
-                  color: "#fff",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 10, fontWeight: 700,
-                  flexShrink: 0, marginTop: 1,
-                }}>
-                  {i + 1}
-                </span>
-                <span className="tn" style={{
-                  fontSize: ".78rem", lineHeight: 1.45,
-                  display: "-webkit-box",
-                  WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden",
-                }}>
-                  {title}
-                </span>
-              </Link>
-            );
-          })}
-        </div>
-      )}
-
-      {/* Recent posts card */}
-      {recentPosts && recentPosts.length > 0 && (
-        <div className="rcard">
-          <CardTitle
-            iconPath="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-            label={isAr ? "أحدث المنشورات" : "Latest Posts"}
-          />
-          {recentPosts.map((post) => {
-            const title = isAr ? post.title_ar : post.title_en;
-            const href = locale === "en" ? `/en/p/${post.id}` : `/p/${post.id}`;
-            const typeIconPath = TYPE_ICON[post.type ?? "article"] ?? TYPE_ICON.article;
-            const cat = (Array.isArray(post.category) ? post.category[0] : post.category) as { slug: string; color: string; name_ar: string; name_en: string } | null;
-            const ago = post.published_at ? timeAgo(post.published_at, locale as "ar" | "en") : "";
-            return (
-              <Link
-                key={post.id}
-                href={href}
+                className="rpanel-cat-row"
                 style={{
-                  display: "flex", gap: 9,
-                  padding: "8px 0",
-                  borderBottom: "1px solid var(--slate)",
-                  textDecoration: "none", alignItems: "flex-start",
-                  transition: "opacity .15s",
+                  display: "flex", alignItems: "center", gap: 9,
+                  padding: "6px 8px", borderRadius: 9,
+                  textDecoration: "none",
                 }}
-                className="recent-post-row"
               >
-                {/* Type icon */}
+                {/* أيقونة — نفس نمط Sidebar */}
                 <span style={{
-                  width: 26, height: 26, minWidth: 26,
-                  borderRadius: 7,
-                  background: "var(--slate3)",
+                  width: 28, height: 28, borderRadius: 8, flexShrink: 0,
+                  background: bg,
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  flexShrink: 0, marginTop: 1,
                 }}>
-                  <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor"
-                    style={{ color: "var(--muted2)" }}>
-                    <path d={typeIconPath} />
-                  </svg>
-                </span>
-                <span style={{ flex: 1, minWidth: 0 }}>
-                  <span style={{
-                    display: "-webkit-box",
-                    WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden",
-                    fontSize: ".78rem", color: "var(--ink2)", lineHeight: 1.45, fontWeight: 500,
-                  }}>
-                    {title}
-                  </span>
-                  {ago && (
-                    <span style={{ display: "block", fontSize: "10px", color: "var(--muted)", marginTop: 3 }}>
-                      {ago}
-                    </span>
+                  {svgIcon ? (
+                    <svg
+                      width="13" height="13" viewBox="0 0 24 24"
+                      fill="none" stroke={color}
+                      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                    >
+                      <path d={svgIcon.d} />
+                      {svgIcon.d2 && <path d={svgIcon.d2} />}
+                    </svg>
+                  ) : (
+                    <svg
+                      width="13" height="13" viewBox="0 0 24 24"
+                      fill="none" stroke={color}
+                      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                    >
+                      <circle cx="12" cy="12" r="4" />
+                    </svg>
                   )}
                 </span>
+
+                {/* الاسم */}
+                <span style={{
+                  flex: 1, fontSize: ".8rem", fontWeight: 600,
+                  color: "var(--ink)", lineHeight: 1.3,
+                }}>
+                  {name}
+                </span>
+
+                {/* عدد المنشورات */}
+                {cat.post_count > 0 && (
+                  <span style={{
+                    fontSize: ".68rem", fontWeight: 700,
+                    color: color,
+                    background: bg,
+                    padding: "1px 7px", borderRadius: 100,
+                    flexShrink: 0,
+                  }}>
+                    {cat.post_count}
+                  </span>
+                )}
               </Link>
             );
           })}
         </div>
-      )}
+
+        {/* رابط الإحصائيات — محجوز للتفعيل لاحقاً
+        <Link href={isAr ? "/statistics" : "/en/statistics"} className="rpanel-stats-link" ...>
+          إحصائيات جمهرة
+        </Link>
+        ── */}
+      </div>
+
+      {/* ── محجوزة لإعادة التفعيل ──────────────────────────────────────
+      Most Read Card — يُعاد تفعيله عند الحاجة
+      <div className="rcard"> ... </div>
+
+      Latest Posts Card — يُعاد تفعيله عند الحاجة
+      <div className="rcard"> ... </div>
+      ──────────────────────────────────────────────────────────────── */}
 
     </aside>
   );

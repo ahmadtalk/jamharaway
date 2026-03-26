@@ -24,8 +24,22 @@ export default function Header() {
           <span className="topbar-slogan">
             {locale === "ar" ? "قيمة المرء ما يعرفه" : "Knowledge is your true value"}
           </span>
-          {/* Nav links — left (RTL: end side) */}
+          {/* Nav links + social icons */}
           <nav className="topbar-links">
+            {/* Social icons */}
+            <a href="https://x.com/jamharacom" target="_blank" rel="noopener noreferrer" className="topbar-social" aria-label="X">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.63 5.905-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="https://instagram.com/jamharacom" target="_blank" rel="noopener noreferrer" className="topbar-social" aria-label="Instagram">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <a href="https://youtube.com/@jamharacom" target="_blank" rel="noopener noreferrer" className="topbar-social" aria-label="YouTube">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="5" width="20" height="14" rx="4"/><polygon points="10,9 15.5,12 10,15" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <a href="https://tiktok.com/@jamharacom" target="_blank" rel="noopener noreferrer" className="topbar-social" aria-label="TikTok">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.3 6.3 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.79a4.85 4.85 0 0 1-1.01-.1z"/></svg>
+            </a>
+            <span style={{ color: "rgba(255,255,255,.2)", fontSize: ".6rem", margin: "0 2px" }}>|</span>
             <Link href={locale === "en" ? "/en/about" : "/about"} className="topbar-link">
               {locale === "ar" ? "من نحن" : "About"}
             </Link>
@@ -104,9 +118,12 @@ export default function Header() {
               </svg>
             </button>
 
-            {/* Language switcher */}
-            <Link href={altHref} className="hdr-lang">
-              {locale === "ar" ? "EN" : "عر"}
+            {/* Language switcher — globe icon */}
+            <Link href={altHref} className="hdr-lang" aria-label={locale === "ar" ? "English" : "العربية"} title={locale === "ar" ? "English" : "العربية"}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+              </svg>
             </Link>
           </div>
 
