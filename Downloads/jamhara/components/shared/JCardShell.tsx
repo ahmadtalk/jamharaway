@@ -21,6 +21,7 @@ export const TYPE_CONFIG: Record<string, { color: string; label_ar: string; labe
   quotes:     { color: "#7C3AED", label_ar: "اقتباسات",   label_en: "Quotes" },
   explainer:  { color: "#B45309", label_ar: "أسئلة شارحة", label_en: "Explainer" },
   debate:     { color: "#059669", label_ar: "مناظرة",      label_en: "Debate" },
+  news:       { color: "#E05A2B", label_ar: "خبر",         label_en: "News" },
 };
 
 /* ── fireBurst ───────────────────────────────────────────────────────────── */

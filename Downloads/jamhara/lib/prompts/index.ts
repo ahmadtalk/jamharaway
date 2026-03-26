@@ -69,3 +69,6 @@ export type { InterviewPromptParams }   from "./types/interview";
 
 export { buildMapPrompt }               from "./types/map";
 export type { MapPromptParams }         from "./types/map";
+
+export { buildNewsPrompt }              from "./types/news";
+export type { NewsPromptParams }        from "./types/news";

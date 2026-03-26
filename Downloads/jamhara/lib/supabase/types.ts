@@ -595,6 +595,15 @@ export interface MapConfig {
   sourceUrl?: string;
 }
 
+// ─── News Types ───────────────────────────────────────────────────────────────
+export interface NewsConfig {
+  source_name?: string;
+  source_url?: string;
+  gnews_url?: string;
+  gnews_published_at?: string;
+  image_url?: string;
+}
+
 // ─── Unified content_config (for all 10 new types) ───────────────────────────
 export type ContentConfig =
   | RankingConfig
@@ -610,7 +619,8 @@ export type ContentConfig =
   | GuideConfig
   | NetworkConfig
   | InterviewConfig
-  | MapConfig;
+  | MapConfig
+  | NewsConfig;
 
 // ─── Database ─────────────────────────────────────────────────────────────────
 export interface Database {
@@ -671,7 +681,7 @@ export interface Database {
           search_vector: string | null;
           created_at: string;
           published_at: string;
-          type: "article" | "chart" | "quiz" | "comparison" | "ranking" | "numbers" | "scenarios" | "timeline" | "factcheck" | "profile" | "briefing" | "quotes" | "explainer" | "debate" | "guide" | "network" | "interview" | "map";
+          type: "article" | "chart" | "quiz" | "comparison" | "ranking" | "numbers" | "scenarios" | "timeline" | "factcheck" | "profile" | "briefing" | "quotes" | "explainer" | "debate" | "guide" | "network" | "interview" | "map" | "news";
           chart_config: ChartConfig | null;
           quiz_config: QuizConfig | null;
           comparison_config: ComparisonConfig | null;

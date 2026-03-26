@@ -21,6 +21,7 @@ import GuideCard from "@/components/guide/GuideCard";
 import NetworkCard from "@/components/network/NetworkCard";
 import InterviewCard from "@/components/interview/InterviewCard";
 import MapCard from "@/components/map/MapCard";
+import NewsCard from "@/components/news/NewsCard";
 
 interface Props {
   post: PostWithRelations;
@@ -122,6 +123,9 @@ export default function PostCard({ post, index = 0 }: Props) {
   if (post.type === "network"   && cc) return <NetworkCard   {...sharedProps} config={cc} />;
   if (post.type === "interview" && cc) return <InterviewCard {...sharedProps} config={cc} />;
   if (post.type === "map"       && cc) return <MapCard       {...sharedProps} config={cc} />;
+
+  // ── News ─────────────────────────────────────────────────────────────────
+  if (post.type === "news") return <NewsCard post={post} locale={locale} timeAgoStr={timeStr} isDetail={false} index={index} />;
 
   // ── Article (default) ────────────────────────────────────────────────────
   return (

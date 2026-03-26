@@ -22,6 +22,7 @@ const TYPE_API: Record<string, string> = {
   network:    "/api/generate-network",
   interview:  "/api/generate-interview",
   map:        "/api/generate-map",
+  news:       "/api/generate-news",
 };
 
 function pickRandom<T>(arr: T[]): T {

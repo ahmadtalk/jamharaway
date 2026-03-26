@@ -25,6 +25,7 @@ import GuideCard from "@/components/guide/GuideCard";
 import NetworkCard from "@/components/network/NetworkCard";
 import InterviewCard from "@/components/interview/InterviewCard";
 import MapCard from "@/components/map/MapCard";
+import NewsCard from "@/components/news/NewsCard";
 import { timeAgo, fmt } from "@/lib/utils";
 import EmbedResizer from "@/components/embed/EmbedResizer";
 import ViewTracker from "@/components/shared/ViewTracker";
@@ -204,6 +205,23 @@ export default async function PostPage({ params }: Props) {
   }
 
   // ── New content types (ranking, numbers, scenarios, timeline, factcheck, profile) ──
+  // ── News ──────────────────────────────────────────────────────────────────
+  if (p.type === "news") {
+    return (
+      <div className="page-shell">
+        <EmbedResizer />
+        <ViewTracker postId={id} />
+        <Header />
+        <div className="page">
+          <Sidebar categories={allCats} />
+          <main>
+            <NewsCard post={p as PostWithRelations} locale={locale as "ar" | "en"} timeAgoStr={timeAgo(p.published_at ?? "", locale as "ar" | "en")} isDetail />
+          </main>
+        </div>
+      </div>
+    );
+  }
+
   const newTypes = ["ranking","numbers","scenarios","timeline","factcheck","profile","briefing","quotes","explainer","debate","guide","network","interview","map"] as const;
   if (newTypes.includes(p.type as typeof newTypes[number]) && (p as any).content_config) {
     const cc = (p as any).content_config;

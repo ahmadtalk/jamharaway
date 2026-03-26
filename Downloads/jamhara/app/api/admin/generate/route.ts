@@ -23,6 +23,7 @@ const ALLOWED_APIS = [
   "/api/generate-network",
   "/api/generate-interview",
   "/api/generate-map",
+  "/api/generate-news",
 ];
 
 export async function POST(req: NextRequest) {

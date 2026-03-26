@@ -14,7 +14,7 @@ interface Cat {
   color: string;
 }
 
-type Group = "article" | "quiz" | "comparison" | "chart" | "advanced";
+type Group = "article" | "quiz" | "comparison" | "chart" | "advanced" | "news";
 type Difficulty = "easy" | "medium" | "hard";
 
 interface Template {
@@ -87,17 +87,21 @@ const TEMPLATES: Template[] = [
   { id: "network",   label: "خريطة الصلات",     icon: "🕸️", desc: "شبكة علاقات مركزية: حلفاء وخصوم وشركاء",  group: "advanced", api: "/api/generate-network",   usesSearch: true },
   { id: "interview", label: "مقابلة",           icon: "🎙️", desc: "حوار صحفي محاكاة مع شخصية بارزة",         group: "advanced", api: "/api/generate-interview", usesSearch: true },
   { id: "map",       label: "توزيع جغرافي",     icon: "🗺️", desc: "بيانات مقارنة عبر دول ومناطق بأشرطة بيانية", group: "advanced", api: "/api/generate-map",       usesSearch: true },
+
+  // News (1)
+  { id: "news", label: "خبر", icon: "📰", desc: "خبر عاجل مُعاد صياغته من مصادر موثوقة عبر GNews", group: "news", api: "/api/generate-news", usesSearch: false },
 ];
 
 const GROUPS: { id: Group; label: string; icon: string; count: number }[] = [
-  { id: "article",    label: "مقال",   icon: "📰", count: 1 },
+  { id: "article",    label: "مقال",   icon: "✍️", count: 1 },
+  { id: "news",       label: "أخبار",  icon: "📰", count: 1 },
   { id: "quiz",       label: "اختبار", icon: "🧠", count: 6 },
   { id: "comparison", label: "مقارنة", icon: "⚔️", count: 6 },
   { id: "chart",      label: "مخطط",   icon: "📊", count: 16 },
   { id: "advanced",   label: "متقدم",  icon: "✨", count: 14 },
 ];
 
-const NEWS_APIS = new Set(["/api/generate", "/api/generate-factcheck", "/api/generate-profile", "/api/generate-map"]);
+const NEWS_APIS = new Set(["/api/generate", "/api/generate-factcheck", "/api/generate-profile", "/api/generate-map", "/api/generate-news"]);
 
 /* ─────────────────────────────────────────────
    Component

@@ -55,6 +55,15 @@ const QUICK_LINKS = [
     hrefEn:  "/en/most-read",
     hot:     true,
   },
+  {
+    d:      "M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1M19 20a2 2 0 002-2V8a2 2 0 00-2-2h-5M8 12h.01M8 16h.01M12 12h.01M12 16h.01M16 12h.01",
+    color:  "#C0392B",
+    bg:     "#FDEDEC",
+    labelAr: "الأخبار",
+    labelEn: "News",
+    href:    "/news",
+    hrefEn:  "/en/news",
+  },
 ];
 
 /* ── أنواع المحتوى ───────────────────────────────────────────────── */
