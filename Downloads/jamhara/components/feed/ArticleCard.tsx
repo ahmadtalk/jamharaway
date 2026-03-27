@@ -1,7 +1,6 @@
 "use client";
 
 import JCardShell from "@/components/shared/JCardShell";
-import ShareButton from "@/components/shared/ShareButton";
 import type { PostWithRelations } from "@/lib/supabase/types";
 
 interface Props {
@@ -64,9 +63,7 @@ export default function ArticleCard({
     >
       {/* زر المشاركة — يظهر فقط في صفحة التفاصيل */}
       {isDetail && (
-        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>
-          <ShareButton post={post} locale={locale} isAr={isAr} />
-        </div>
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>        </div>
       )}
 
       {/* Image */}

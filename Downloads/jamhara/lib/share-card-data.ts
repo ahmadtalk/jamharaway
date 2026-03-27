@@ -7,7 +7,17 @@ import type {
   ChartConfig, QuizConfig, ComparisonConfig, NewsConfig,
   AnyQuizQuestion,
 } from "@/lib/supabase/types";
-import type { NewsShareData } from "@/components/shared/NewsShareCard";
+// ── بيانات بطاقة الأخبار ──────────────────────────────────────────────────────
+export interface NewsShareData {
+  title:         string;
+  lede?:         string;
+  sourceName?:   string;
+  keyPoints:     string[];
+  whyItMatters?: string;
+  whatsNext?:    string;
+  quote?:        { text: string; author: string; role?: string };
+  publishedAt?:  string;
+}
 
 // ── بيانات بطاقة البروفايل الغنية ─────────────────────────────────────────────
 export interface ProfileShareData {
@@ -34,7 +44,6 @@ export interface ShareCardData {
   profileData?: ProfileShareData;
   newsData?:    NewsShareData;
 }
-export type { NewsShareData };
 
 export const TYPE_META: Record<string, { label: string; labelEn: string; emoji: string; color: string }> = {
   article:    { label: "مقال",        labelEn: "Article",     emoji: "✍️",  color: "#3B6CC4" },

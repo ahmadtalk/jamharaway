@@ -2,7 +2,6 @@
 
 import type { ChartConfig, PostWithRelations } from "@/lib/supabase/types";
 import JCardShell from "@/components/shared/JCardShell";
-import ShareButton from "@/components/shared/ShareButton";
 import ChartRenderer from "./ChartRenderer";
 
 interface Props {
@@ -58,9 +57,7 @@ export default function ChartCard({
     >
       {/* زر المشاركة — يظهر فقط في صفحة التفاصيل */}
       {isDetail && post && (
-        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>
-          <ShareButton post={post} locale={locale} isAr={locale === "ar"} />
-        </div>
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>        </div>
       )}
 
       <div className="chart-wrap">

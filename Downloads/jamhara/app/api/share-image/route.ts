@@ -1,8 +1,7 @@
 /**
- * GET /api/share-image?id=POST_ID&size=square&locale=ar
+ * GET /api/share-image?id=POST_ID&locale=ar
  * ────────────────────────────────────────────────────────
- * يستدعي Puppeteer service على Railway ويُعيد صورة PNG عالية الجودة
- * معزول تماماً عن نظام html-to-image الحالي
+ * يستدعي Puppeteer service على Railway ويُعيد صورة PNG 1080×1350 (4:5 Instagram)
  *
  * متغيرات البيئة المطلوبة:
  *   PUPPETEER_SERVICE_URL  — URL خدمة Railway (مثل: https://xxx.railway.app)
@@ -12,18 +11,12 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
-const SIZES = {
-  square:    { width: 1080, height: 1080 },
-  landscape: { width: 1200, height:  628 },
-  story:     { width: 1080, height: 1920 },
-} as const;
-
-type Size = keyof typeof SIZES;
+const WIDTH  = 1080;
+const HEIGHT = 1350;
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
   const id     = searchParams.get("id");
-  const size   = (searchParams.get("size") ?? "square") as Size;
   const locale = (searchParams.get("locale") === "en" ? "en" : "ar");
 
   if (!id) {
@@ -38,9 +31,8 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const { width, height } = SIZES[size] ?? SIZES.square;
   const siteUrl    = process.env.NEXT_PUBLIC_SITE_URL ?? "https://jamhara.com";
-  const previewUrl = `${siteUrl}/share-preview/${id}?size=${size}&locale=${locale}`;
+  const previewUrl = `${siteUrl}/share-preview/${id}?locale=${locale}`;
 
   try {
     const response = await fetch(`${puppeteerUrl}/screenshot`, {
@@ -49,8 +41,7 @@ export async function GET(req: NextRequest) {
         "Content-Type": "application/json",
         "x-secret":     process.env.PUPPET_SECRET ?? "",
       },
-      body: JSON.stringify({ url: previewUrl, width, height, scale: 2 }),
-      // Vercel Hobby = 60s max — Puppeteer عادةً 5-10s
+      body: JSON.stringify({ url: previewUrl, width: WIDTH, height: HEIGHT, scale: 2 }),
       signal: AbortSignal.timeout(55_000),
     });
 
@@ -61,11 +52,10 @@ export async function GET(req: NextRequest) {
 
     const buffer = await response.arrayBuffer();
 
-    const sizeLabel = `${width * 2}x${height * 2}`; // بالدقة المضاعفة
     return new NextResponse(buffer, {
       headers: {
         "Content-Type":        "image/png",
-        "Content-Disposition": `attachment; filename="jamhara-${size}-${sizeLabel}.png"`,
+        "Content-Disposition": `attachment; filename="jamhara-share-2160x2700.png"`,
         "Cache-Control":       "public, max-age=3600",
       },
     });

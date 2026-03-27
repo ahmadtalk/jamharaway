@@ -2,7 +2,6 @@
 
 import type { ComparisonConfig, PostWithRelations } from "@/lib/supabase/types";
 import JCardShell from "@/components/shared/JCardShell";
-import ShareButton from "@/components/shared/ShareButton";
 import { postUrl } from "@/lib/utils";
 import Link from "next/link";
 
@@ -132,9 +131,7 @@ export default function ComparisonCard({
     >
       {/* زر المشاركة — يظهر فقط في صفحة التفاصيل */}
       {isDetail && post && (
-        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>
-          <ShareButton post={post} locale={locale} isAr={locale === "ar"} />
-        </div>
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>        </div>
       )}
 
       {/* Body — moved to top (feed only) */}

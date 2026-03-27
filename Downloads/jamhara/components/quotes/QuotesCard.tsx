@@ -4,7 +4,6 @@ import Link from "next/link";
 import type { QuotesConfig, QuoteSentiment, PostWithRelations } from "@/lib/supabase/types";
 import { postUrl } from "@/lib/utils";
 import JCardShell from "@/components/shared/JCardShell";
-import ShareButton from "@/components/shared/ShareButton";
 
 interface Props {
   id: string;
@@ -71,9 +70,7 @@ export default function QuotesCard({
     >
       {/* زر المشاركة — يظهر فقط في صفحة التفاصيل */}
       {isDetail && post && (
-        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>
-          <ShareButton post={post} locale={locale} isAr={locale === "ar"} />
-        </div>
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>        </div>
       )}
 
       {/* Topic label */}

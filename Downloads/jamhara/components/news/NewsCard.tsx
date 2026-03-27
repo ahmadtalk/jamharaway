@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import JCardShell from "@/components/shared/JCardShell";
-import ShareButton from "@/components/shared/ShareButton";
 import type { PostWithRelations, NewsConfig } from "@/lib/supabase/types";
 
 interface Props {
@@ -93,9 +92,7 @@ export default function NewsCard({ post, locale, timeAgoStr, isDetail = false, i
             </span>
           )}
         </div>
-        {/* زر مشاركة كصورة — يظهر فقط في صفحة التفاصيل */}
-        {isDetail && <ShareButton post={post} locale={locale} isAr={isAr} />}
-      </div>
+        {/* زر مشاركة كصورة — يظهر فقط في صفحة التفاصيل */}      </div>
 
       {/* ── الـ Lede ── */}
       {lede && (

@@ -299,7 +299,7 @@ export function PostsTableClient({
 
                     {/* Actions */}
                     <td>
-                      <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                      <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
                         <Link
                           href={`/ar/p/${post.id}`}
                           target="_blank"
@@ -315,6 +315,22 @@ export function PostsTableClient({
                         >
                           تعديل
                         </Link>
+                        <Link
+                          href={`/share-preview/${post.id}`}
+                          target="_blank"
+                          className="a-btn-ghost"
+                          style={{ padding: "4px 10px", fontSize: ".75rem", borderRadius: 6, color: "#1D4ED8" }}
+                        >
+                          معاينة
+                        </Link>
+                        <a
+                          href={`/api/share-image?id=${post.id}`}
+                          download
+                          className="a-btn-ghost"
+                          style={{ padding: "4px 10px", fontSize: ".75rem", borderRadius: 6, color: "#059669" }}
+                        >
+                          📸 صورة
+                        </a>
                         <DeleteButton postId={post.id} />
                       </div>
                     </td>
