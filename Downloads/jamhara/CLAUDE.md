@@ -1325,6 +1325,54 @@ Puppeteer (جديد):      Chrome حقيقي على Railway يصوّر /share-pr
 - [x] `components/admin/PostsTableClient.tsx` — أزرار "معاينة" (رابط `/share-preview/[id]`) و"📸 صورة" (يستدعي `/api/share-image`) في كل صف
 - [x] `lib/share-card-data.ts` — `NewsShareData` interface محلياً (بعد حذف `NewsShareCard.tsx`)
 
+### جلسة مارس 2026 — المجموعة الخامسة عشرة (Jamhara MCP Server)
+
+**بنية الخدمة:**
+- [x] `jamhara-mcp/` — خدمة Node.js/TypeScript مستقلة في نفس الـ repo
+- [x] `@modelcontextprotocol/sdk` v1.x — StreamableHTTP transport (stateless)
+- [x] مستضافة على Railway (نفس مشروع puppeteer-screenshot)
+- [x] **URL:** `https://jamhara-mcp-production.up.railway.app`
+- [x] **Endpoint:** `POST /mcp` — يقبل Accept: application/json, text/event-stream
+
+**الأدوات الخمس (Tools):**
+- [x] `search_posts(query, type?, category_slug?, limit?, locale?)` — بحث نصي في العنوان والمحتوى
+- [x] `get_post(id, locale?)` — محتوى منشور كامل مُنسَّق بحسب النوع (19 نوعاً)
+- [x] `get_latest_posts(type?, category_slug?, limit?, locale?)` — أحدث المنشورات
+- [x] `list_categories(locale?)` — كل التصنيفات مع post_count
+- [x] `get_statistics(locale?)` — إحصائيات المنصة + توزيع الأنواع + الأكثر قراءة
+
+**التوثيق التقني:**
+- [x] `formatPost(post, locale)` — دالة مركزية تُحوّل أي منشور لنص markdown مُنسَّق حسب نوعه
+- [x] ثنائي اللغة كامل: AR/EN مع fallback تلقائي
+- [x] يقرأ من Supabase (anon key — public data فقط)
+- [x] متغيرات Railway: `SUPABASE_URL` + `SUPABASE_ANON_KEY` + `PORT=3002`
+
+**إعداد Claude Desktop:**
+- [x] أُضيف إلى `~/Library/Application Support/Claude/claude_desktop_config.json`:
+```json
+{
+  "mcpServers": {
+    "jamhara": {
+      "type": "http",
+      "url": "https://jamhara-mcp-production.up.railway.app/mcp"
+    }
+  }
+}
+```
+
+**ملفات الخدمة:**
+```
+jamhara-mcp/
+├── src/index.ts      # الخادم الكامل — MCP server + Express + 5 tools
+├── package.json
+├── tsconfig.json     # strict: false (لتجاوز MCP SDK type depth issue)
+├── Dockerfile        # node:20-slim — build + prune
+└── railway.toml      # builder: DOCKERFILE، healthcheck: /health
+```
+
+**⚠️ ملاحظة TypeScript:** `server.tool()` يسبب `TS2589: Type instantiation excessively deep` مع strict mode.
+**الحل:** `strict: false` في tsconfig + `// @ts-ignore` على أول `server.tool()` call.
+
 ### قيد الانتظار (مقترحات للمستقبل)
 - [ ] إعداد cron-job.org لـ /api/cron/fetch-news كل 15 دقيقة
 - [ ] إشعارات بريد عند فشل جدولة (Resend/SendGrid)
@@ -1436,6 +1484,7 @@ git reset --hard ae79f0e
 | `3f33b44` | مارس 2026 | **المجموعة الثانية عشرة** — ProfileShareCard + NewsShareCard مخصصتان + إصلاح العنوان |
 | `ec26334` | مارس 2026 | **المجموعة الثالثة عشرة** — Puppeteer على Railway + tags_en + NewsCard ثنائي اللغة |
 | `3bc11e1` | مارس 2026 | **المجموعة الرابعة عشرة** — نظام مشاركة موحّد: SharePreviewCard 1080×1350 + حذف html-to-image |
+| `HEAD` | مارس 2026 | **المجموعة الخامسة عشرة** — Jamhara MCP Server على Railway + إعداد Claude Desktop |
 
 ### محتوى `ae79f0e`
 - 18 نوع محتوى، 43 قالب، جميع الـ routes والمكونات
@@ -1455,4 +1504,4 @@ git reset --hard ae79f0e
 
 ---
 
-*آخر تحديث: مارس 2026 — المجموعة الرابعة عشرة: SharePreviewCard موحّد 1080×1350 لـ 19 نوع + حذف html-to-image كاملاً + أزرار معاينة/صورة في الأدمن*
+*آخر تحديث: مارس 2026 — المجموعة الخامسة عشرة: Jamhara MCP Server على Railway (5 أدوات، 19 نوع محتوى) + إعداد Claude Desktop*
