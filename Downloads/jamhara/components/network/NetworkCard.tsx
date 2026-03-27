@@ -21,6 +21,7 @@ interface Props {
   parentCat?: { name_ar: string; name_en: string; slug: string; color?: string };
   subCat?: { name_ar: string; name_en: string; slug: string };
   tags?: string[];
+  tags_en?: string[];
   post?: PostWithRelations;
 }
 
@@ -43,7 +44,7 @@ export default function NetworkCard({
   id, title, body, config,
   categoryName, categorySlug, categoryColor,
   likeCount, locale, timeAgoStr, isDetail = false,
-  parentCat, subCat, tags, post,
+  parentCat, subCat, tags, tags_en, post,
 }: Props) {
   const isAr = locale === "ar";
   const nodes = config.nodes ?? [];
@@ -68,7 +69,7 @@ export default function NetworkCard({
       subCat={subCat}
       sourceUrl={config.sourceUrl}
       likeCount={likeCount}
-      tags={tags}
+      tags={tags} tags_en={tags_en}
     >
       {/* زر المشاركة — يظهر فقط في صفحة التفاصيل */}
       {isDetail && post && (

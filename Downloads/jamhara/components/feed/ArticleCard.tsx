@@ -11,10 +11,11 @@ interface Props {
   isDetail?: boolean;
   index?: number;
   tags?: string[];
+  tags_en?: string[];
 }
 
 export default function ArticleCard({
-  post, locale, timeAgoStr, isDetail = false, index = 0, tags,
+  post, locale, timeAgoStr, isDetail = false, index = 0, tags, tags_en,
 }: Props) {
   const isAr = locale === "ar";
   const title = isAr ? post.title_ar : (post.title_en || post.title_ar);
@@ -59,7 +60,7 @@ export default function ArticleCard({
       subCat={subCat}
       sources={sources}
       likeCount={post.like_count}
-      tags={tags}
+      tags={tags} tags_en={tags_en}
     >
       {/* زر المشاركة — يظهر فقط في صفحة التفاصيل */}
       {isDetail && (

@@ -78,6 +78,7 @@ export async function POST(req: NextRequest) {
     const cfg = parsed.content_config;
     if (!cfg?.items?.length) return NextResponse.json({ error:"Invalid ranking config" }, { status:500 });
     const tags = normalizeTags(Array.isArray(parsed.tags) ? parsed.tags : []);
+    const tags_en: string[] = Array.isArray(parsed.tags_en) ? parsed.tags_en.map(String) : [];
     const { data:post, error:err } = await supabase.from("posts").insert({
       title_ar: strip(parsed.title_ar) || effectiveTopic,
       title_en: strip(parsed.title_en) || effectiveTopic,

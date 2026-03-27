@@ -207,6 +207,7 @@ export async function POST(req: NextRequest) {
         reading_time: Math.max(1, Math.ceil(generatedPost.body_ar.split(" ").length / 200)),
         published_at: new Date().toISOString(),
         tags: generatedPost.tags,
+        tags_en: generatedPost.tags_en,
         // Store real sources from web search in content_config
         content_config: generatedPost.sources.length > 0
           ? { sources: generatedPost.sources } as unknown as null
@@ -371,6 +372,7 @@ async function generatePost(
     body_en: (parsed.body_en ?? "") as string,
     sources: cleanSources,
     tags: normalizeTags(Array.isArray(parsed.tags) ? parsed.tags : []),
+    tags_en: Array.isArray(parsed.tags_en) ? parsed.tags_en.map(String) : [],
     usage: firstUsage,
   };
 }

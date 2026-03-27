@@ -159,6 +159,7 @@ export async function POST(req: NextRequest) {
     sourceUrl: parsed.sourceUrl,
   };
   const tags = normalizeTags(Array.isArray(parsed.tags) ? parsed.tags : []);
+    const tags_en: string[] = Array.isArray(parsed.tags_en) ? parsed.tags_en.map(String) : [];
   const { data: post, error } = await supabase.from("posts").insert({
     title_ar: stripTags(parsed.title_ar ?? `اختبار: ${topic}`),
     title_en: stripTags(parsed.title_en ?? `Quiz: ${topic}`),

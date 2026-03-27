@@ -36,13 +36,13 @@ export default async function TagPage({ params }: Props) {
     supabase
       .from("posts")
       .select(
-        `*, type, chart_config, quiz_config, comparison_config, content_config, tags,
+        `*, type, chart_config, quiz_config, comparison_config, content_config, tags, tags_en,
          category:categories!posts_category_id_fkey(*),
          subcategory:categories!posts_subcategory_id_fkey(*),
          source:sources(*)`
       )
       .eq("status", "published")
-      .contains("tags", [tag])
+      .contains(isAr ? "tags" : "tags_en", [tag])
       .order("published_at", { ascending: false })
       .limit(50),
     supabase.from("categories").select("*").eq("is_active", true).order("sort_order"),

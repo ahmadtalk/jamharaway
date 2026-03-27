@@ -74,6 +74,7 @@ export default function PostCard({ post, index = 0 }: Props) {
     parentCat,
     subCat,
     tags: post.tags ?? [],
+    tags_en: post.tags_en ?? [],
   };
 
   // ── Chart ────────────────────────────────────────────────────────────────

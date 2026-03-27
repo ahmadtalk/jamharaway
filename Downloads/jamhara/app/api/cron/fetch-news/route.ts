@@ -74,6 +74,12 @@ interface RewrittenArticle {
   quote?: { text_ar: string; author_ar: string; role_ar?: string } | null;
   whats_next_ar?: string | null;
   tags?: string[];
+  title_en?: string;
+  lede_en?: string;
+  why_it_matters_en?: string;
+  key_points_en?: string[];
+  whats_next_en?: string | null;
+  tags_en?: string[];
 }
 
 async function rewriteArticle(article: GNewsArticle): Promise<RewrittenArticle | null> {
@@ -104,6 +110,12 @@ async function rewriteArticle(article: GNewsArticle): Promise<RewrittenArticle |
       quote: parsed.quote && parsed.quote !== null ? parsed.quote : null,
       whats_next_ar: parsed.whats_next_ar ? String(parsed.whats_next_ar) : null,
       tags: Array.isArray(parsed.tags) ? parsed.tags : [],
+      title_en: parsed.title_en ? String(parsed.title_en) : undefined,
+      lede_en: parsed.lede_en ? String(parsed.lede_en) : undefined,
+      why_it_matters_en: parsed.why_it_matters_en ? String(parsed.why_it_matters_en) : undefined,
+      key_points_en: Array.isArray(parsed.key_points_en) ? parsed.key_points_en.map(String) : undefined,
+      whats_next_en: parsed.whats_next_en ? String(parsed.whats_next_en) : null,
+      tags_en: Array.isArray(parsed.tags_en) ? parsed.tags_en.map(String) : [],
     };
   } catch {
     return null;
@@ -188,11 +200,13 @@ export async function GET(req: NextRequest) {
     const rewritten = await rewriteArticle(article);
     if (!rewritten) { results.failed++; continue; }
 
-    const tags = normalizeTags(rewritten.tags ?? []);
+    const tags    = normalizeTags(rewritten.tags ?? []);
+    const tags_en: string[] = rewritten.tags_en ?? [];
     const { error } = await supabase.from("posts").insert({
       title_ar: rewritten.title_ar,
-      title_en: article.title,
+      title_en: rewritten.title_en ?? article.title,
       body_ar: rewritten.lede_ar,
+      body_en: rewritten.lede_en ?? null,
       type: "news" as const,
       status: "published",
       category_id: cat.id,
@@ -204,11 +218,14 @@ export async function GET(req: NextRequest) {
         gnews_url: article.url,
         gnews_published_at: article.publishedAt,
         why_it_matters_ar: rewritten.why_it_matters_ar ?? null,
+        why_it_matters_en: rewritten.why_it_matters_en ?? null,
         key_points_ar: rewritten.key_points_ar ?? [],
+        key_points_en: rewritten.key_points_en ?? [],
         quote: rewritten.quote ?? null,
         whats_next_ar: rewritten.whats_next_ar ?? null,
+        whats_next_en: rewritten.whats_next_en ?? null,
       },
-      tags,
+      tags, tags_en,
       quality_score: 80,
       reading_time: 1,
       published_at: new Date().toISOString(),

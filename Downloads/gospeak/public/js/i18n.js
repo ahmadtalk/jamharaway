@@ -47,6 +47,7 @@ const TRANSLATIONS = {
     copy_trans_done:      'تم نسخ الترجمة ✓',
     err_trans:            '⚠ فشلت الترجمة: ',
     err_send:             '⚠ فشل الإرسال: ',
+    err_rate_limit:       '⚠ وصلت إلى الحد المسموح به — حاول مجدداً بعد ساعة',
     err_mic_unsupported:  '⚠ المتصفح لا يدعم الإدخال الصوتي — جرّب Chrome أو Edge',
     err_mic_notallowed:   '⚠ لم يُمنح إذن الميكروفون',
     err_mic_network:      '⚠ خطأ في الشبكة',
@@ -68,6 +69,18 @@ const TRANSLATIONS = {
     qr_unavailable:       'اضغط الرابط أعلاه لنسخه',
     transcribing:         '🎙 جارٍ تحويل الصوت...',
     err_transcribe:       '⚠ فشل التحويل الصوتي — ',
+    name_title:           'ما اسمك؟',
+    name_desc:            'سيظهر اسمك لشريكك في المحادثة',
+    name_placeholder:     'اسمك',
+    name_confirm:         'متابعة →',
+    name_error:           '⚠ الرجاء إدخال اسمك',
+    name_editing:         'تعديل الاسم',
+    nav_features:         'المزايا',
+    nav_about:            'من نحن',
+    nav_terms:            'الشروط',
+    nav_usage:            'الاستخدام',
+    nav_contact:          'تواصل',
+    nav_history:          'السجل',
   },
 
   tr: {
@@ -116,6 +129,7 @@ const TRANSLATIONS = {
     copy_trans_done:      'Çeviri kopyalandı ✓',
     err_trans:            '⚠ Çeviri başarısız: ',
     err_send:             '⚠ Gönderilemedi: ',
+    err_rate_limit:       '⚠ İstek limitine ulaşıldı — bir saat sonra tekrar deneyin',
     err_mic_unsupported:  '⚠ Tarayıcı ses girişini desteklemiyor — Chrome veya Edge deneyin',
     err_mic_notallowed:   '⚠ Mikrofon izni verilmedi',
     err_mic_network:      '⚠ Ağ hatası',
@@ -137,6 +151,18 @@ const TRANSLATIONS = {
     qr_unavailable:       'Kopyalamak için yukarıdaki bağlantıya tıklayın',
     transcribing:         '🎙 Ses dönüştürülüyor...',
     err_transcribe:       '⚠ Ses dönüştürme başarısız — ',
+    name_title:           'Adınız nedir?',
+    name_desc:            'Adınız, sohbette karşı taraf tarafından görünecek',
+    name_placeholder:     'Adınız',
+    name_confirm:         'Devam et →',
+    name_error:           '⚠ Lütfen adınızı girin',
+    name_editing:         'Adı düzenle',
+    nav_features:         'Özellikler',
+    nav_about:            'Hakkımızda',
+    nav_terms:            'Şartlar',
+    nav_usage:            'Kullanım',
+    nav_contact:          'İletişim',
+    nav_history:          'Geçmiş',
   },
 
   en: {
@@ -185,6 +211,7 @@ const TRANSLATIONS = {
     copy_trans_done:      'Translation copied ✓',
     err_trans:            '⚠ Translation failed: ',
     err_send:             '⚠ Send failed: ',
+    err_rate_limit:       '⚠ Request limit reached — try again in an hour',
     err_mic_unsupported:  '⚠ Browser doesn\'t support voice input — try Chrome or Edge',
     err_mic_notallowed:   '⚠ Microphone permission denied',
     err_mic_network:      '⚠ Network error',
@@ -206,6 +233,18 @@ const TRANSLATIONS = {
     qr_unavailable:       'Click the link above to copy it',
     transcribing:         '🎙 Transcribing audio...',
     err_transcribe:       '⚠ Transcription failed — ',
+    name_title:           'What\'s your name?',
+    name_desc:            'Your partner will see this name in the chat',
+    name_placeholder:     'Your name',
+    name_confirm:         'Continue →',
+    name_error:           '⚠ Please enter your name',
+    name_editing:         'Edit name',
+    nav_features:         'Features',
+    nav_about:            'About',
+    nav_terms:            'Terms',
+    nav_usage:            'Usage',
+    nav_contact:          'Contact',
+    nav_history:          'History',
   },
 };
 
@@ -265,6 +304,13 @@ function applyUI() {
   set('myLangName',    t('my_lang_default'));
   set('translatingBadge', t('translating_badge'));
   set('msgInput',      t('placeholder'), 'placeholder');
+  set('navFeatures',   t('nav_features'));
+  set('navAbout',      t('nav_about'));
+  set('navHistory',    t('nav_history'));
+  // Generic: translate all data-i18n-key elements (info screen navs + footers)
+  document.querySelectorAll('[data-i18n-key]').forEach(el => {
+    el.textContent = t(el.dataset.i18nKey);
+  });
 }
 
 /* ── Init (called once, before DOMContentLoaded) ──── */

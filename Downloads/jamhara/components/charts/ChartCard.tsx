@@ -22,6 +22,7 @@ interface Props {
   parentCat?: { name_ar: string; name_en: string; slug: string; color?: string };
   subCat?: { name_ar: string; name_en: string; slug: string };
   tags?: string[];
+  tags_en?: string[];
   post?: PostWithRelations;
 }
 
@@ -29,7 +30,7 @@ export default function ChartCard({
   id, title, config,
   categoryName, categorySlug, categoryColor,
   likeCount, locale, timeAgoStr, isDetail = false, body,
-  parentCat, subCat, tags, post,
+  parentCat, subCat, tags, tags_en, post,
 }: Props) {
   const isAr = locale === "ar";
   const chartHeight = isDetail ? 380 : 260;
@@ -53,7 +54,7 @@ export default function ChartCard({
       subCat={subCat}
       sourceUrl={sourceUrl}
       likeCount={likeCount}
-      tags={tags}
+      tags={tags} tags_en={tags_en}
     >
       {/* زر المشاركة — يظهر فقط في صفحة التفاصيل */}
       {isDetail && post && (

@@ -30,6 +30,7 @@ import NewsCard from "@/components/news/NewsCard";
 import { timeAgo, fmt } from "@/lib/utils";
 import EmbedResizer from "@/components/embed/EmbedResizer";
 import ViewTracker from "@/components/shared/ViewTracker";
+import PuppeteerShareButton from "@/components/shared/PuppeteerShareButton";
 
 export const revalidate = 3600;
 
@@ -113,6 +114,9 @@ export default async function PostPage({ params }: Props) {
       <div className="page-shell">
         <EmbedResizer />
         <ViewTracker postId={id} />
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>
+          <PuppeteerShareButton postId={id} locale={locale as "ar" | "en"} />
+        </div>
         <Header />
         <div className="page">
           <Sidebar categories={allCats} />
@@ -167,6 +171,9 @@ export default async function PostPage({ params }: Props) {
       <div className="page-shell">
         <EmbedResizer />
         <ViewTracker postId={id} />
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>
+          <PuppeteerShareButton postId={id} locale={locale as "ar" | "en"} />
+        </div>
         <Header />
         <div className="page">
           <Sidebar categories={allCats} />
@@ -216,6 +223,9 @@ export default async function PostPage({ params }: Props) {
       <div className="page-shell" style={{ display: "flex", flexDirection: "column", minHeight: "100dvh" }}>
         <EmbedResizer />
         <ViewTracker postId={id} />
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>
+          <PuppeteerShareButton postId={id} locale={locale as "ar" | "en"} />
+        </div>
         <Header />
         <div className="page" style={{ flex: 1 }}>
           <Sidebar categories={allCats} />
@@ -274,6 +284,9 @@ export default async function PostPage({ params }: Props) {
       <div className="page-shell">
         <EmbedResizer />
         <ViewTracker postId={id} />
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>
+          <PuppeteerShareButton postId={id} locale={locale as "ar" | "en"} />
+        </div>
         <Header />
         <div className="page">
           <Sidebar categories={allCats} />
@@ -312,6 +325,9 @@ export default async function PostPage({ params }: Props) {
       <div className="page-shell">
         <EmbedResizer />
         <ViewTracker postId={id} />
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>
+          <PuppeteerShareButton postId={id} locale={locale as "ar" | "en"} />
+        </div>
         <Header />
         <div className="page">
           <Sidebar categories={allCats} />
@@ -365,6 +381,9 @@ export default async function PostPage({ params }: Props) {
     <div className="page-shell">
       <EmbedResizer />
       <ViewTracker postId={id} />
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>
+          <PuppeteerShareButton postId={id} locale={locale as "ar" | "en"} />
+        </div>
       <Header />
       <div className="page">
         <Sidebar categories={allCats} />

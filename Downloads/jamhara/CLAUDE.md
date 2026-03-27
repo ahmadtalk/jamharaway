@@ -65,6 +65,7 @@ app/
     │   (جميعها: topic اختياري، category_slug إلزامي فقط)
     ├── flag-post/             # تبليغ عن منشور → post_flags ← جديد
     ├── view-post/             # POST — يستدعي increment_post_view RPC ← جديد
+    ├── share-image/           # GET — يستدعي Railway Puppeteer ويُعيد PNG ← جديد
     ├── admin/
     │   ├── generate/          # PROXY — يمرر طلبات التوليد مع GENERATE_SECRET
     │   ├── schedules/         # GET+POST — إدارة الجدولات
@@ -93,8 +94,15 @@ components/
 │   ├── Footer.tsx              # Server Component
 │   └── MobileNav.tsx
 ├── shared/
-│   ├── JCardShell.tsx          # غلاف بطاقة موحّد لجميع الأنواع
-│   └── ViewTracker.tsx         # "use client" — يستدعي /api/view-post عند mount
+│   ├── JCardShell.tsx              # غلاف بطاقة موحّد لجميع الأنواع
+│   ├── ViewTracker.tsx             # "use client" — يستدعي /api/view-post عند mount
+│   ├── ShareCard.tsx               # بطاقة مشاركة موحّدة (19 نوع) — html-to-image
+│   ├── ShareCardModal.tsx          # مودال html-to-image (النظام القديم)
+│   ├── ShareButton.tsx             # زر html-to-image
+│   ├── ProfileShareCard.tsx        # بطاقة بروفايل غنية (مربع/أفقي/ستوري) ← جديد
+│   ├── NewsShareCard.tsx           # بطاقة خبر Axios-style ← جديد
+│   ├── SharePreviewRenderer.tsx    # wrapper لـ ShareCard لصفحة Puppeteer ← جديد
+│   └── PuppeteerShareButton.tsx    # زر "صورة احترافية" → Railway Puppeteer ← جديد
 ├── feed/ charts/ quiz/ comparison/ ranking/ numbers/
 ├── scenarios/ timeline/ factcheck/
 ├── profile/     ← جديد — ProfileCard.tsx
@@ -313,6 +321,9 @@ CRON_SECRET                     # يحمي /api/cron/scheduler
 NEXT_PUBLIC_SITE_URL            # https://jamhara.com
 REPLICATE_API_TOKEN             # اختياري — Flux Schnell للصور
 SUPABASE_SERVICE_ROLE_KEY       # للعمليات الحساسة (createAdminClient)
+GNEWS_API_KEY                   # 6f64bce4838846052ccde0426948a76b — أخبار GNews
+PUPPETEER_SERVICE_URL           # https://puppeteer-screenshot.up.railway.app ← جديد
+PUPPET_SECRET                   # مشترك مع Railway — يحمي /screenshot endpoint ← جديد
 ```
 
 ---
@@ -1242,6 +1253,55 @@ id, topic_normalized, topic_original, post_type, category_slug, post_id, generat
 - الشعار يجب أن يكون base64 data URL في ShareCard (ليس `/logo.png`) وإلا html-to-image لا يُضمّنه
 - `pixelRatio: 2` = 4× البكسل الكلية = جودة مثالية للنشر الاجتماعي
 
+### جلسة مارس 2026 — المجموعة الثالثة عشرة (نظام Puppeteer + تحسينات بطاقات المشاركة)
+
+**نظام Puppeteer Screenshot (معزول تماماً):**
+- [x] `puppeteer-service/server.js` — Express + Puppeteer: `POST /screenshot` + `GET /health`
+  - Auth: `x-secret` header مقابل `PUPPET_SECRET`
+  - `deviceScaleFactor: 2` → دقة 2160×2160 للمربع
+  - `waitUntil: "networkidle0"` + 800ms انتظار → خطوط React مكتملة
+- [x] `puppeteer-service/Dockerfile` — `node:20-slim` + `chromium` via apt، `PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true`
+- [x] `puppeteer-service/railway.toml` — builder: DOCKERFILE، healthcheck: `/health`
+- [x] `puppeteer-service/package.json` — express + puppeteer v22
+- [x] Railway deployment: `https://puppeteer-screenshot.up.railway.app`
+- [x] `app/share-preview/[id]/page.tsx` — صفحة نظيفة بلا Header/Sidebar/Footer لـ Puppeteer
+  - params: `?size=square|landscape|story&locale=ar|en`
+  - `logoSrc` و`imgSrc` كـ URLs مباشرة (Chrome حقيقي يحمّلها بلا مشاكل)
+- [x] `components/shared/SharePreviewRenderer.tsx` — "use client" wrapper حول ShareCard بلا ref
+- [x] `app/api/share-image/route.ts` — GET → يبني preview URL → POST لـ Railway → يُعيد PNG
+  - AbortSignal.timeout(55_000) ← Vercel Hobby = 60s
+  - Content-Disposition: attachment → تحميل مباشر
+- [x] `components/shared/PuppeteerShareButton.tsx` — زر "🖼️ صورة احترافية" مستقل
+  - dropdown بـ 3 أحجام (مربع/أفقي/ستوري) مع أبعاد ودقة مضاعفة
+  - يستدعي `/api/share-image` ويُحمّل PNG مباشرة
+- [x] `app/[locale]/p/[id]/page.tsx` — `PuppeteerShareButton` مضاف لجميع 19 نوع
+- [x] Vercel env vars: `PUPPETEER_SERVICE_URL` + `PUPPET_SECRET` مضبوطان ومنشوران
+
+**تحسينات بطاقات المشاركة (ProfileShareCard + NewsShareCard):**
+- [x] `ProfileShareCard`: سلوغن "قيمة المرء ما يعرفه" بدل شارة النوع + شعار جمهرة، فوتر "البروفايل كاملاً في موقع جمهرة"، story layout بـ space-between، landscape panel 400px
+- [x] `NewsShareCard`: نفس هيدر/فوتر ProfileShareCard، 3 أحجام بمحتوى Axios Smart Brevity (لده + نقاط + أهمية + اقتباس + ما التالي؟)، إزالة source badge، إصلاح قطع العنوان
+- [x] إصلاح `webkit-line-clamp` في Title component — حذف `lines` prop والسماح بالعنوان الكامل
+
+**نظام tags_en — وسوم إنجليزية:**
+- [x] DB column `tags_en TEXT[]` مضاف لجدول posts
+- [x] `lib/prompts/shared/tags.ts` — `TAGS_INSTRUCTION` يُنتج `tags` (عربي) + `tags_en` (ASCII slugs) معاً
+- [x] جميع 19 route تستخرج `tags_en` وتحفظها في DB
+- [x] `lib/tags.ts` — `tagHref()` يكتشف ASCII tags ويتخطى encoding
+- [x] `JCardShell.tsx` — `tags_en` prop، يعرض `tags_en` في `locale="en"`
+- [x] `app/[locale]/tag/[slug]/page.tsx` — يستعلم `tags_en` عند `locale="en"`
+
+**NewsCard ثنائي اللغة:**
+- [x] `lib/prompts/types/news.ts` v2.0 — يُنتج هيكل Axios كامل بالعربية والإنجليزية
+- [x] `lib/supabase/types.ts` — `NewsConfig` موسّع بـ `_en` fields + `NewsQuote` بـ `text_en/author_en/role_en`
+- [x] `NewsCard.tsx` — يختار `_en` fields عند `locale="en"` مع fallback للعربية
+- [x] إصلاح الاقتباس: يعرض `text_en/author_en/role_en` في الواجهة الإنجليزية
+
+**الفرق بين النظامَين:**
+```
+html-to-image (قديم):  يُحوّل DOM → PNG في المتصفح، يحتاج base64 للصور والخطوط، قد يفشل مع CSS vars
+Puppeteer (جديد):      Chrome حقيقي على Railway يصوّر /share-preview/[id]، يدعم كل CSS + خطوط + RTL
+```
+
 ### قيد الانتظار (مقترحات للمستقبل)
 - [ ] إعداد cron-job.org لـ /api/cron/fetch-news كل 15 دقيقة
 - [ ] إشعارات بريد عند فشل جدولة (Resend/SendGrid)
@@ -1350,7 +1410,8 @@ git reset --hard ae79f0e
 | `76b219d` | مارس 2026 | **المجموعة الثامنة** — dedup كامل + محرر البروفايل + برومبت v2.1 |
 | `a193e3c` | مارس 2026 | **المجموعة التاسعة** — ميزة الأخبار الكاملة (GNews + NewsCard + /news page) |
 | `a4ebda5` | مارس 2026 | **المجموعة العاشرة** — SEO Tags (19 نوع) + Axios Smart Brevity + Share Card للأخبار |
-| `HEAD`    | مارس 2026 | **المجموعة الثانية عشرة** — ProfileShareCard + NewsShareCard مخصصتان + إصلاح العنوان |
+| `3f33b44` | مارس 2026 | **المجموعة الثانية عشرة** — ProfileShareCard + NewsShareCard مخصصتان + إصلاح العنوان |
+| `HEAD`    | مارس 2026 | **المجموعة الثالثة عشرة** — Puppeteer على Railway + tags_en + NewsCard ثنائي اللغة |
 
 ### محتوى `ae79f0e`
 - 18 نوع محتوى، 43 قالب، جميع الـ routes والمكونات
@@ -1370,4 +1431,4 @@ git reset --hard ae79f0e
 
 ---
 
-*آخر تحديث: مارس 2026 — المجموعة الثانية عشرة: ProfileShareCard + NewsShareCard مخصصتان مع هيدر/فوتر موحّد (سلوغن + شعار + "كاملاً في موقع جمهرة") + إصلاح قطع العنوان*
+*آخر تحديث: مارس 2026 — المجموعة الثالثة عشرة: نظام Puppeteer على Railway (معزول) + tags_en (19 نوع) + NewsCard ثنائي اللغة + ProfileShareCard/NewsShareCard مع هيدر/فوتر موحّد*

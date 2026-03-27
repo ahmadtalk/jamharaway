@@ -78,11 +78,12 @@ export async function POST(req: NextRequest) {
     const cfg = parsed.content_config;
     if (!cfg?.key_points?.length) return NextResponse.json({ error:"Invalid briefing config" }, { status:500 });
     const tags = normalizeTags(Array.isArray(parsed.tags) ? parsed.tags : []);
+    const tags_en: string[] = Array.isArray(parsed.tags_en) ? parsed.tags_en.map(String) : [];
     const { data:post, error:err } = await supabase.from("posts").insert({
       title_ar:strip(parsed.title_ar)||topic, title_en:strip(parsed.title_en)||topic,
       body_ar:strip(parsed.body_ar), body_en:strip(parsed.body_en),
       type:"briefing" as "briefing", status:"published", category_id:cat.id,
-      content_config:cfg, tags, quality_score:90, reading_time:3,
+      content_config:cfg, tags, tags_en, quality_score:90, reading_time:3,
       published_at:new Date().toISOString(),
     }).select().single();
     if (err) return NextResponse.json({ error:err.message }, { status:500 });

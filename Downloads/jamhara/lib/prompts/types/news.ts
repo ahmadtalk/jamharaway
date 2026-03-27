@@ -4,7 +4,7 @@
  * VERSION : 2.0
  * UPDATED : مارس 2026
  * INPUT   : title, description, content, source_name, publishedAt
- * OUTPUT  : { title_ar, lede_ar, why_it_matters_ar, key_points_ar[], quote?, whats_next_ar?, tags[] }
+ * OUTPUT  : { title_ar, lede_ar, why_it_matters_ar, key_points_ar[], quote?, whats_next_ar?, tags[], title_en, lede_en, why_it_matters_en, key_points_en[], whats_next_en?, tags_en[] }
  * STYLE   : Axios Smart Brevity — فقرة افتتاحية + لماذا يهم + نقاط + اقتباس + ما التالي
  */
 
@@ -44,11 +44,20 @@ export function buildNewsPrompt({ title, description, content, sourceName, publi
   ],
   "quote": {
     "text_ar": "اقتباس مباشر بالعربية — أو null إذا لم يوجد اقتباس جوهري في المصدر",
+    "text_en": "Same quote translated to English — or null",
     "author_ar": "اسم صاحب الاقتباس",
-    "role_ar": "منصبه أو صفته"
+    "author_en": "Name of the speaker in English",
+    "role_ar": "منصبه أو صفته",
+    "role_en": "Their title or role in English"
   },
   "whats_next_ar": "جملة أو جملتان عن المتوقع أو الخطوة التالية — أو null إذا لم تكن معلومة",
-  "tags": ["وسم1", "وسم2", "..."]
+  "tags": ["وسم1", "وسم2", "..."],
+  "title_en": "Direct English headline ≤ 10 words",
+  "lede_en": "1-2 sentences: who, what, when, where — 20-35 words",
+  "why_it_matters_en": "1-3 sentences explaining significance in English",
+  "key_points_en": ["Point starting with verb or number", "..."],
+  "whats_next_en": "1-2 sentences on what to expect — or null",
+  "tags_en": ["syria", "economy", "..."]
 }
 
 قواعد صارمة:
@@ -59,5 +68,6 @@ export function buildNewsPrompt({ title, description, content, sourceName, publi
 - whats_next_ar: أرجع null إذا لم تكن هناك معلومة مؤكدة عن المستقبل
 - اللغة: فصحى سلسة كالجزيرة والعربية — لا ترجمة حرفية
 - tags: 5-8 وسوم عربية (دول، أشخاص، منظمات، مواضيع) — كلمة أو كلمتان — بدون تشكيل
+- tags_en: same count as tags — lowercase ASCII slugs — use hyphens for spaces
 - أرجع JSON فقط بدون أي نص قبله أو بعده`;
 }

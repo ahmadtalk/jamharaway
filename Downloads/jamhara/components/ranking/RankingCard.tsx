@@ -23,6 +23,7 @@ interface Props {
   parentCat?: { name_ar: string; name_en: string; slug: string; color?: string };
   subCat?: { name_ar: string; name_en: string; slug: string };
   tags?: string[];
+  tags_en?: string[];
   post?: PostWithRelations;
 }
 
@@ -43,7 +44,7 @@ export default function RankingCard({
   id, title, body, config,
   categoryName, categorySlug, categoryColor,
   likeCount, locale, timeAgoStr, isDetail,
-  parentCat, subCat, tags, post,
+  parentCat, subCat, tags, tags_en, post,
 }: Props) {
   const isAr = locale === "ar";
   const [mounted, setMounted] = useState(false);
@@ -77,7 +78,7 @@ export default function RankingCard({
       subCat={subCat}
       sourceUrl={sourceUrl}
       likeCount={likeCount}
-      tags={tags}
+      tags={tags} tags_en={tags_en}
     >
       {/* زر المشاركة — يظهر فقط في صفحة التفاصيل */}
       {isDetail && post && (

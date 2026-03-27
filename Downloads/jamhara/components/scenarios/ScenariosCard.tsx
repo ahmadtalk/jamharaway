@@ -21,6 +21,7 @@ interface Props {
   parentCat?: { name_ar: string; name_en: string; slug: string; color?: string };
   subCat?: { name_ar: string; name_en: string; slug: string };
   tags?: string[];
+  tags_en?: string[];
   post?: PostWithRelations;
 }
 
@@ -41,7 +42,7 @@ export default function ScenariosCard({
   id, title, body, config,
   categoryName, categorySlug, categoryColor = "#0891B2",
   likeCount, locale, timeAgoStr, isDetail = false,
-  parentCat, subCat, tags, post,
+  parentCat, subCat, tags, tags_en, post,
 }: Props) {
   const isAr = locale === "ar";
 
@@ -66,7 +67,7 @@ export default function ScenariosCard({
       subCat={subCat}
       sourceUrl={sourceUrl}
       likeCount={likeCount}
-      tags={tags}
+      tags={tags} tags_en={tags_en}
     >
       {/* زر المشاركة — يظهر فقط في صفحة التفاصيل */}
       {isDetail && post && (

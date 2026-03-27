@@ -74,7 +74,8 @@ export interface JCardShellProps {
   sourceUrl?: string;   // legacy — single source URL
   sourceName?: string;  // legacy — single source name
   sources?: { name: string; url: string }[];  // preferred — array of real sources
-  tags?: string[];      // SEO tags — clickable chips
+  tags?: string[];      // SEO tags Arabic — clickable chips
+  tags_en?: string[];   // SEO tags English — used when locale="en"
   likeCount: number;
   children: React.ReactNode;
 }
@@ -83,7 +84,7 @@ export interface JCardShellProps {
 export default function JCardShell({
   postId, postType, typeLabel_ar, typeLabel_en,
   title, locale, timeAgoStr, isDetail = false, index = 0,
-  parentCat, subCat, sourceUrl, sourceName, sources, tags, likeCount, children,
+  parentCat, subCat, sourceUrl, sourceName, sources, tags, tags_en, likeCount, children,
 }: JCardShellProps) {
   const isAr = locale === "ar";
   const isEmbed = useIsEmbed();
@@ -472,15 +473,19 @@ export default function JCardShell({
       )} {/* end isEmbed ternary */}
 
       {/* ── Tags ─────────────────────────────────────────────────────── */}
-      {tags && tags.length > 0 && !isEmbed && (
-        <div className="jcard-tags">
-          {tags.map(tag => (
-            <Link key={tag} href={tagHref(tag, locale)} className="jcard-tag">
-              {tag}
-            </Link>
-          ))}
-        </div>
-      )}
+      {!isEmbed && (() => {
+        const displayTags = (!isAr && tags_en && tags_en.length > 0) ? tags_en : tags;
+        if (!displayTags || displayTags.length === 0) return null;
+        return (
+          <div className="jcard-tags">
+            {displayTags.map(tag => (
+              <Link key={tag} href={tagHref(tag, locale)} className="jcard-tag">
+                #{tag}
+              </Link>
+            ))}
+          </div>
+        );
+      })()}
 
       {/* ── Verify / Flag modal ──────────────────────────────────────── */}
       {verifyOpen && (

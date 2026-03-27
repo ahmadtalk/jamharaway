@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#f1f5f9">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="tranly">
@@ -44,17 +45,16 @@
 
   <!-- App Header -->
   <div class="home-header">
-    <!-- 3D orbital rings (CSS only, decorative) -->
-    <div class="h3d-scene" aria-hidden="true">
-      <div class="h3d-ring h3d-r1"><span class="h3d-dot"></span></div>
-      <div class="h3d-ring h3d-r2"><span class="h3d-dot"></span></div>
-      <div class="h3d-ring h3d-r3"></div>
-    </div>
     <div class="home-brand" dir="ltr" aria-label="tranly">
       <span class="home-brand-word">tranly</span><span class="home-brand-dot"></span>
     </div>
     <p class="home-tagline" id="uiTagline">Speak the world</p>
     <div class="home-header-badge" id="headerBadge">🌍 24 languages · AI powered</div>
+    <nav class="home-nav" aria-label="تنقل">
+      <a class="home-nav-link" onclick="showScreen('featuresScreen')" id="navFeatures">المزايا</a>
+      <a class="home-nav-link" onclick="showScreen('aboutScreen')" id="navAbout">من نحن</a>
+      <a class="home-nav-link" onclick="showScreen('homeScreen')" id="navHistory" data-i18n-key="nav_history">السجل</a>
+    </nav>
   </div>
 
   <!-- Scrollable Body -->
@@ -84,6 +84,15 @@
         </div>
       </div>
 
+      <!-- User identity chip (shows once name is set) -->
+      <div id="userNameChip" class="user-name-chip" onclick="editName()"
+           role="button" tabindex="0" style="display:none"
+           onkeydown="if(event.key==='Enter'||event.key===' ')editName()">
+        <span class="user-name-chip-icon">👤</span>
+        <span id="userNameChipText" class="user-name-chip-name"></span>
+        <span class="user-name-chip-edit">✏</span>
+      </div>
+
       <!-- Recent Chats -->
       <div id="recentChats" class="home-section" style="display:none">
         <div class="home-section-label" id="recentChatsTitleEl">Recent Chats</div>
@@ -91,6 +100,39 @@
       </div>
 
     </div>
+    <footer class="site-footer">
+      <a class="site-footer-link" onclick="showScreen('termsScreen')" data-i18n-key="nav_terms">الشروط</a>
+      <span class="site-footer-sep">·</span>
+      <a class="site-footer-link" onclick="showScreen('usageScreen')" data-i18n-key="nav_usage">الاستخدام</a>
+      <span class="site-footer-sep">·</span>
+      <a class="site-footer-link" onclick="showScreen('contactScreen')" data-i18n-key="nav_contact">تواصل</a>
+      <span class="site-footer-sep">·</span>
+      <span class="site-footer-copy">© 2026 tranly</span>
+    </footer>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     NAME ENTRY
+══════════════════════════════════════════ -->
+<div id="nameScreen" class="screen">
+  <div class="card" style="text-align:center">
+    <div class="name-avatar" aria-hidden="true">👤</div>
+    <h2 id="nameScreenTitle" style="font-size:20px;margin-bottom:8px">What's your name?</h2>
+    <p id="nameScreenDesc" style="font-size:13px;color:var(--text2);margin-bottom:0">
+      Your partner will see this name in the chat
+    </p>
+    <input type="text" id="nameInput" class="name-input"
+           maxlength="30" autocomplete="given-name" spellcheck="false"
+           placeholder="Your name"
+           oninput="onNameInput()"
+           onkeydown="if(event.key==='Enter')confirmName()">
+    <button class="btn btn-primary" id="nameConfirmBtn" onclick="confirmName()" disabled>
+      Continue →
+    </button>
+    <button class="btn btn-ghost" id="nameBackBtn" onclick="showScreen('homeScreen')" style="margin-top:10px">
+      ← Back
+    </button>
   </div>
 </div>
 
@@ -261,6 +303,296 @@
 
 <!-- Toast -->
 <div id="toast"></div>
+
+<!-- ══════════════════════════════════════════
+     FEATURES SCREEN
+══════════════════════════════════════════ -->
+<div id="featuresScreen" class="screen info-screen">
+  <div class="site-header-bar">
+    <div class="shb-logo" dir="ltr" onclick="showScreen('homeScreen')" role="link" tabindex="0">
+      <span class="shb-logo-word">tranly</span><span class="shb-logo-dot"></span>
+    </div>
+    <nav class="shb-nav">
+      <a class="shb-nav-link" onclick="showScreen('featuresScreen')" data-i18n-key="nav_features">المزايا</a>
+      <a class="shb-nav-link" onclick="showScreen('aboutScreen')" data-i18n-key="nav_about">من نحن</a>
+      <a class="shb-nav-link" onclick="showScreen('homeScreen')" data-i18n-key="nav_history">السجل</a>
+    </nav>
+  </div>
+  <div class="info-body">
+    <div class="info-page">
+      <!-- Hero -->
+      <div class="feat-hero">
+        <div class="feat-hero-icon">✨</div>
+        <h1 class="feat-hero-title">تحدّث بلا حدود</h1>
+        <p class="feat-hero-sub">كل ما تحتاجه لمحادثة متعددة اللغات في مكان واحد</p>
+      </div>
+      <!-- Feature cards -->
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-card-icon">🌍</div>
+          <div class="feature-card-title">24+ لغة</div>
+          <div class="feature-card-desc">يدعم أكثر من 24 لغة عالمية بشكل تلقائي وسلس</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">⚡</div>
+          <div class="feature-card-title">ترجمة فورية</div>
+          <div class="feature-card-desc">رسائلك تُترجم فوراً بمجرد إرسالها، بدون أي تأخير</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">🎙</div>
+          <div class="feature-card-title">إدخال صوتي</div>
+          <div class="feature-card-desc">تكلم بدل الكتابة وسيتحول كلامك إلى نص تلقائياً</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">📱</div>
+          <div class="feature-card-title">تطبيق ويب</div>
+          <div class="feature-card-desc">يعمل مباشرة من المتصفح دون الحاجة لتحميل أي شيء</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">🔗</div>
+          <div class="feature-card-title">مشاركة بالرابط</div>
+          <div class="feature-card-desc">شارك رابط الغرفة أو رمز QR مع شريكك بنقرة واحدة</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">🔒</div>
+          <div class="feature-card-title">خصوصية تامة</div>
+          <div class="feature-card-desc">المحادثات العابرة تُحذف تلقائياً خلال ساعتين</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">🤖</div>
+          <div class="feature-card-title">ذكاء اصطناعي</div>
+          <div class="feature-card-desc">مدعوم بنماذج GPT-4o وWhisper من OpenAI</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">💾</div>
+          <div class="feature-card-title">حفظ المحادثات</div>
+          <div class="feature-card-desc">المحادثات الطويلة تُحفظ لمدة 30 يوماً ويمكن استئنافها</div>
+        </div>
+      </div>
+      <!-- CTA -->
+      <div class="feat-cta">
+        <button class="btn btn-primary" onclick="showScreen('homeScreen')">ابدأ محادثة الآن ←</button>
+      </div>
+    </div>
+    <footer class="site-footer">
+      <a class="site-footer-link" onclick="showScreen('termsScreen')" data-i18n-key="nav_terms">الشروط</a>
+      <span class="site-footer-sep">·</span>
+      <a class="site-footer-link" onclick="showScreen('usageScreen')" data-i18n-key="nav_usage">الاستخدام</a>
+      <span class="site-footer-sep">·</span>
+      <a class="site-footer-link" onclick="showScreen('contactScreen')" data-i18n-key="nav_contact">تواصل</a>
+      <span class="site-footer-sep">·</span>
+      <span class="site-footer-copy">© 2026 tranly</span>
+    </footer>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ABOUT SCREEN
+══════════════════════════════════════════ -->
+<div id="aboutScreen" class="screen info-screen">
+  <div class="site-header-bar">
+    <div class="shb-logo" dir="ltr" onclick="showScreen('homeScreen')" role="link" tabindex="0">
+      <span class="shb-logo-word">tranly</span><span class="shb-logo-dot"></span>
+    </div>
+    <nav class="shb-nav">
+      <a class="shb-nav-link" onclick="showScreen('featuresScreen')" data-i18n-key="nav_features">المزايا</a>
+      <a class="shb-nav-link" onclick="showScreen('aboutScreen')" data-i18n-key="nav_about">من نحن</a>
+      <a class="shb-nav-link" onclick="showScreen('homeScreen')" data-i18n-key="nav_history">السجل</a>
+    </nav>
+  </div>
+  <div class="info-body">
+    <div class="info-page">
+      <div class="info-hero-icon">🌐</div>
+      <h1 class="info-page-title">من نحن؟</h1>
+      <div class="info-section">
+        <h2>رسالتنا</h2>
+        <p>نؤمن بأن اللغة لا ينبغي أن تكون عائقاً بين البشر. Tranly هو تطبيق للمحادثة الفورية المتعددة اللغات، يتيح لأي شخصين التواصل بسهولة بغض النظر عن لغتيهما.</p>
+      </div>
+      <div class="info-section">
+        <h2>رؤيتنا</h2>
+        <p>عالم يتواصل فيه الناس بحرية تامة، حيث تختفي الحواجز اللغوية وتحل محلها تقنيات الذكاء الاصطناعي التي تُترجم وتربط في آنٍ واحد.</p>
+      </div>
+      <div class="info-section">
+        <h2>الفريق</h2>
+        <p>طوّر هذا التطبيق أحمد حذيفة، صحفي سوري ورائد أعمال ومدير تحرير نون بوست.</p>
+        <a class="team-link" href="https://x.com/AhmadTalk" target="_blank" rel="noopener">
+          <span class="team-link-icon">𝕏</span> @AhmadTalk
+        </a>
+      </div>
+    </div>
+    <footer class="site-footer">
+      <a class="site-footer-link" onclick="showScreen('termsScreen')" data-i18n-key="nav_terms">الشروط</a>
+      <span class="site-footer-sep">·</span>
+      <a class="site-footer-link" onclick="showScreen('usageScreen')" data-i18n-key="nav_usage">الاستخدام</a>
+      <span class="site-footer-sep">·</span>
+      <a class="site-footer-link" onclick="showScreen('contactScreen')" data-i18n-key="nav_contact">تواصل</a>
+      <span class="site-footer-sep">·</span>
+      <span class="site-footer-copy">© 2026 tranly</span>
+    </footer>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TERMS SCREEN
+══════════════════════════════════════════ -->
+<div id="termsScreen" class="screen info-screen">
+  <div class="site-header-bar">
+    <div class="shb-logo" dir="ltr" onclick="showScreen('homeScreen')" role="link" tabindex="0">
+      <span class="shb-logo-word">tranly</span><span class="shb-logo-dot"></span>
+    </div>
+    <nav class="shb-nav">
+      <a class="shb-nav-link" onclick="showScreen('featuresScreen')" data-i18n-key="nav_features">المزايا</a>
+      <a class="shb-nav-link" onclick="showScreen('aboutScreen')" data-i18n-key="nav_about">من نحن</a>
+      <a class="shb-nav-link" onclick="showScreen('homeScreen')" data-i18n-key="nav_history">السجل</a>
+    </nav>
+  </div>
+  <div class="info-body">
+    <div class="info-page">
+      <h1 class="info-page-title">شروط الخدمة</h1>
+      <p class="info-page-date">آخر تحديث: مارس 2026</p>
+      <div class="info-section">
+        <h2>١. القبول بالشروط</h2>
+        <p>باستخدام تطبيق Tranly، فإنك توافق على الالتزام بهذه الشروط والأحكام. إذا كنت لا توافق على هذه الشروط، يُرجى عدم استخدام الخدمة.</p>
+      </div>
+      <div class="info-section">
+        <h2>٢. الاستخدام المقبول</h2>
+        <p>يُسمح باستخدام Tranly للمحادثات الشخصية والمهنية المشروعة فقط. يُحظر استخدام التطبيق لنشر محتوى مسيء أو ضار أو غير قانوني.</p>
+      </div>
+      <div class="info-section">
+        <h2>٣. المحادثات والبيانات</h2>
+        <p>المحادثات العابرة تُحذف تلقائياً بعد ساعتين. المحادثات الطويلة تُحفظ لمدة 30 يوماً ثم تُحذف. لا نحتفظ بسجل دائم لمحادثاتك.</p>
+      </div>
+      <div class="info-section">
+        <h2>٤. الخدمات الخارجية</h2>
+        <p>يعتمد Tranly على خدمات OpenAI للترجمة والتعرف على الكلام. يخضع استخدامها لسياسات OpenAI المعمول بها.</p>
+      </div>
+      <div class="info-section">
+        <h2>٥. تحديد المسؤولية</h2>
+        <p>نسعى لتقديم خدمة عالية الجودة، غير أننا لا نضمن دقة الترجمة في جميع الأوقات. قد تتأثر الخدمة بتوافر الشبكة ومزودي الخدمة الخارجيين.</p>
+      </div>
+      <div class="info-section">
+        <h2>٦. التعديلات</h2>
+        <p>نحتفظ بحق تعديل هذه الشروط في أي وقت. سيتم إخطار المستخدمين بأي تغييرات جوهرية.</p>
+      </div>
+    </div>
+    <footer class="site-footer">
+      <a class="site-footer-link" onclick="showScreen('termsScreen')" data-i18n-key="nav_terms">الشروط</a>
+      <span class="site-footer-sep">·</span>
+      <a class="site-footer-link" onclick="showScreen('usageScreen')" data-i18n-key="nav_usage">الاستخدام</a>
+      <span class="site-footer-sep">·</span>
+      <a class="site-footer-link" onclick="showScreen('contactScreen')" data-i18n-key="nav_contact">تواصل</a>
+      <span class="site-footer-sep">·</span>
+      <span class="site-footer-copy">© 2026 tranly</span>
+    </footer>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     USAGE AGREEMENT SCREEN
+══════════════════════════════════════════ -->
+<div id="usageScreen" class="screen info-screen">
+  <div class="site-header-bar">
+    <div class="shb-logo" dir="ltr" onclick="showScreen('homeScreen')" role="link" tabindex="0">
+      <span class="shb-logo-word">tranly</span><span class="shb-logo-dot"></span>
+    </div>
+    <nav class="shb-nav">
+      <a class="shb-nav-link" onclick="showScreen('featuresScreen')" data-i18n-key="nav_features">المزايا</a>
+      <a class="shb-nav-link" onclick="showScreen('aboutScreen')" data-i18n-key="nav_about">من نحن</a>
+      <a class="shb-nav-link" onclick="showScreen('homeScreen')" data-i18n-key="nav_history">السجل</a>
+    </nav>
+  </div>
+  <div class="info-body">
+    <div class="info-page">
+      <h1 class="info-page-title">اتفاقية الاستخدام</h1>
+      <p class="info-page-date">آخر تحديث: مارس 2026</p>
+      <div class="info-section">
+        <h2>الغرض من الاتفاقية</h2>
+        <p>توضح هذه الاتفاقية حقوق والتزامات كل طرف عند استخدام منصة Tranly للمحادثة المتعددة اللغات.</p>
+      </div>
+      <div class="info-section">
+        <h2>حقوق المستخدم</h2>
+        <p>يحق لك استخدام Tranly مجاناً للمحادثات الشخصية. بياناتك ملكك، ولديك الحق في حذف محادثاتك في أي وقت عبر واجهة التطبيق.</p>
+      </div>
+      <div class="info-section">
+        <h2>التزامات المستخدم</h2>
+        <p>تلتزم بعدم استخدام التطبيق لأي غرض غير مشروع. تلتزم بعدم محاولة اختراق أو استغلال الخدمة بأي شكل من الأشكال.</p>
+      </div>
+      <div class="info-section">
+        <h2>الخصوصية والبيانات</h2>
+        <p>لا نبيع بياناتك لأي طرف ثالث. الرسائل المرسلة تُعالج بواسطة خوادم OpenAI لأغراض الترجمة فقط، وفقاً لسياسة خصوصية OpenAI.</p>
+      </div>
+      <div class="info-section">
+        <h2>الملكية الفكرية</h2>
+        <p>جميع حقوق الملكية الفكرية لتطبيق Tranly محفوظة. يُمنح المستخدمون ترخيصاً محدوداً لاستخدام التطبيق دون نقل أي حقوق ملكية.</p>
+      </div>
+      <div class="info-section">
+        <h2>إنهاء الاتفاقية</h2>
+        <p>يحق لك إيقاف استخدام الخدمة في أي وقت. نحتفظ بحق تعليق الوصول في حال انتهاك هذه الاتفاقية.</p>
+      </div>
+    </div>
+    <footer class="site-footer">
+      <a class="site-footer-link" onclick="showScreen('termsScreen')" data-i18n-key="nav_terms">الشروط</a>
+      <span class="site-footer-sep">·</span>
+      <a class="site-footer-link" onclick="showScreen('usageScreen')" data-i18n-key="nav_usage">الاستخدام</a>
+      <span class="site-footer-sep">·</span>
+      <a class="site-footer-link" onclick="showScreen('contactScreen')" data-i18n-key="nav_contact">تواصل</a>
+      <span class="site-footer-sep">·</span>
+      <span class="site-footer-copy">© 2026 tranly</span>
+    </footer>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     CONTACT SCREEN
+══════════════════════════════════════════ -->
+<div id="contactScreen" class="screen info-screen">
+  <div class="site-header-bar">
+    <div class="shb-logo" dir="ltr" onclick="showScreen('homeScreen')" role="link" tabindex="0">
+      <span class="shb-logo-word">tranly</span><span class="shb-logo-dot"></span>
+    </div>
+    <nav class="shb-nav">
+      <a class="shb-nav-link" onclick="showScreen('featuresScreen')" data-i18n-key="nav_features">المزايا</a>
+      <a class="shb-nav-link" onclick="showScreen('aboutScreen')" data-i18n-key="nav_about">من نحن</a>
+      <a class="shb-nav-link" onclick="showScreen('homeScreen')" data-i18n-key="nav_history">السجل</a>
+    </nav>
+  </div>
+  <div class="info-body">
+    <div class="info-page">
+      <div class="info-hero-icon">💬</div>
+      <h1 class="info-page-title">نحن هنا للمساعدة</h1>
+      <p class="info-page-subtitle">لا تتردد في التواصل معنا لأي استفسار أو اقتراح</p>
+      <div class="contact-cards">
+        <a class="contact-card" href="mailto:hello@tranly.me">
+          <div class="contact-card-icon">📧</div>
+          <div class="contact-card-body">
+            <div class="contact-card-title">البريد الإلكتروني</div>
+            <div class="contact-card-val">hello@tranly.me</div>
+          </div>
+        </a>
+        <a class="contact-card" href="https://x.com/tranlyapp" target="_blank" rel="noopener">
+          <div class="contact-card-icon" style="font-style:normal">𝕏</div>
+          <div class="contact-card-body">
+            <div class="contact-card-title">تويتر / X</div>
+            <div class="contact-card-val">@tranlyapp</div>
+          </div>
+        </a>
+      </div>
+      <div class="info-section" style="margin-top:24px">
+        <h2>اقتراح أو ملاحظة؟</h2>
+        <p>نرحب بجميع الاقتراحات التي تساعدنا على تحسين Tranly. راسلنا على البريد الإلكتروني أو X وسنرد في أقرب وقت ممكن.</p>
+      </div>
+    </div>
+    <footer class="site-footer">
+      <a class="site-footer-link" onclick="showScreen('termsScreen')" data-i18n-key="nav_terms">الشروط</a>
+      <span class="site-footer-sep">·</span>
+      <a class="site-footer-link" onclick="showScreen('usageScreen')" data-i18n-key="nav_usage">الاستخدام</a>
+      <span class="site-footer-sep">·</span>
+      <a class="site-footer-link" onclick="showScreen('contactScreen')" data-i18n-key="nav_contact">تواصل</a>
+      <span class="site-footer-sep">·</span>
+      <span class="site-footer-copy">© 2026 tranly</span>
+    </footer>
+  </div>
+</div>
 
 <!-- Scripts -->
 <script src="/js/langs.js"></script>

@@ -96,8 +96,10 @@ export function slugToTag(slug: string): string {
 
 /**
  * رابط صفحة الوسم
+ * وسوم ASCII (إنجليزية) — بدون encode | وسوم عربية — encodeURIComponent
  */
 export function tagHref(tag: string, locale: string): string {
   const prefix = locale === "en" ? "/en" : "";
-  return `${prefix}/tag/${tagToSlug(tag)}`;
+  const slug = /^[\x00-\x7F]+$/.test(tag) ? tag : tagToSlug(tag);
+  return `${prefix}/tag/${slug}`;
 }

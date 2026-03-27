@@ -113,6 +113,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error:`Invalid ${comparison_type} config structure` }, { status:500 });
     }
     const tags = normalizeTags(Array.isArray(parsed.tags) ? parsed.tags : []);
+    const tags_en: string[] = Array.isArray(parsed.tags_en) ? parsed.tags_en.map(String) : [];
     const { data: post, error: insertError } = await supabase
       .from("posts")
       .insert({

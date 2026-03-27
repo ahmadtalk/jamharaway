@@ -96,6 +96,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Failed to parse AI response", raw: raw.slice(0, 300) }, { status: 500 });
   }
   const tags = normalizeTags(Array.isArray(parsed.tags) ? parsed.tags : []);
+    const tags_en: string[] = Array.isArray(parsed.tags_en) ? parsed.tags_en.map(String) : [];
   const { data: post, error } = await supabase.from("posts").insert({
     title_ar: parsed.title_ar,
     title_en: parsed.title_en,
