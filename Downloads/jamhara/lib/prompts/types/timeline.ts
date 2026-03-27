@@ -9,6 +9,7 @@
  */
 
 import { SOURCE_INSTRUCTION } from "../shared/sources";
+import { TAGS_INSTRUCTION } from "../shared/tags";
 
 export interface TimelinePromptParams {
   topic: string;
@@ -24,6 +25,7 @@ export function buildTimelinePrompt({ topic, categorySlug }: TimelinePromptParam
   "title_en": "Title",
   "body_ar": "وصف مختصر 2-3 جمل نص عادي",
   "body_en": "Short description 2-3 sentences plain text",
+  "tags": ["وسم1", "وسم2", "..."],
   "content_config": {
     "events": [
       {
@@ -47,5 +49,5 @@ export function buildTimelinePrompt({ topic, categorySlug }: TimelinePromptParam
 - تنوّع الأنواع: لا تجعل كل الأحداث من نفس النوع
 - emoji مناسب لكل حدث
 - وصف مختصر وواقعي
-- نص بدون HTML${SOURCE_INSTRUCTION}`;
+- نص بدون HTML${TAGS_INSTRUCTION}${SOURCE_INSTRUCTION}`;
 }

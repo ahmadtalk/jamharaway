@@ -4,6 +4,7 @@ import Header from "@/components/layout/Header";
 import Sidebar from "@/components/layout/Sidebar";
 import RightPanel from "@/components/layout/RightPanel";
 import MobileNav from "@/components/layout/MobileNav";
+import Footer from "@/components/layout/Footer";
 import PostCard from "@/components/feed/PostCard";
 import ArticleCard from "@/components/feed/ArticleCard";
 import type { PostWithRelations, Category } from "@/lib/supabase/types";
@@ -130,6 +131,7 @@ export default async function PostPage({ params }: Props) {
               isDetail={true}
               parentCat={parentCatProp}
               subCat={subCatProp}
+              tags={p.tags ?? []}
             />
             {relatedQuiz && relatedQuiz.length > 0 && (
               <div style={{ marginTop: 16 }}>
@@ -183,6 +185,7 @@ export default async function PostPage({ params }: Props) {
               isDetail={true}
               parentCat={parentCatProp}
               subCat={subCatProp}
+              tags={p.tags ?? []}
             />
             {relatedComp && relatedComp.length > 0 && (
               <div style={{ marginTop: 16 }}>
@@ -208,16 +211,19 @@ export default async function PostPage({ params }: Props) {
   // ── News ──────────────────────────────────────────────────────────────────
   if (p.type === "news") {
     return (
-      <div className="page-shell">
+      <div className="page-shell" style={{ display: "flex", flexDirection: "column", minHeight: "100dvh" }}>
         <EmbedResizer />
         <ViewTracker postId={id} />
         <Header />
-        <div className="page">
+        <div className="page" style={{ flex: 1 }}>
           <Sidebar categories={allCats} />
           <main>
             <NewsCard post={p as PostWithRelations} locale={locale as "ar" | "en"} timeAgoStr={timeAgo(p.published_at ?? "", locale as "ar" | "en")} isDetail />
           </main>
+          <RightPanel locale={locale} />
         </div>
+        <Footer locale={locale} />
+        <MobileNav />
       </div>
     );
   }
@@ -242,6 +248,7 @@ export default async function PostPage({ params }: Props) {
       isDetail: true,
       parentCat: parentCatProp,
       subCat: subCatProp,
+      tags: p.tags ?? [],
     };
 
     const CardComponent =
@@ -321,6 +328,7 @@ export default async function PostPage({ params }: Props) {
               body={body}
               parentCat={parentCatProp}
               subCat={subCatProp}
+              tags={p.tags ?? []}
             />
             {relatedChart && relatedChart.length > 0 && (
               <div style={{ marginTop: 16 }}>

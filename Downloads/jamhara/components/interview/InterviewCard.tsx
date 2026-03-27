@@ -19,6 +19,7 @@ interface Props {
   isDetail?: boolean;
   parentCat?: { name_ar: string; name_en: string; slug: string; color?: string };
   subCat?: { name_ar: string; name_en: string; slug: string };
+  tags?: string[];
 }
 
 const ACCENT = "#1D4ED8";
@@ -28,7 +29,7 @@ export default function InterviewCard({
   id, title, body, config,
   categoryName, categorySlug, categoryColor,
   likeCount, locale, timeAgoStr, isDetail = false,
-  parentCat, subCat,
+  parentCat, subCat, tags,
 }: Props) {
   const isAr = locale === "ar";
   const qa = config.qa ?? [];
@@ -54,6 +55,7 @@ export default function InterviewCard({
       subCat={subCat}
       sourceUrl={config.sourceUrl}
       likeCount={likeCount}
+      tags={tags}
     >
       {/* Body */}
       {!isDetail && body && (

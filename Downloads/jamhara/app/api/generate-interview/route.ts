@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { buildInterviewPrompt } from "@/lib/prompts";
 import { extractJSON } from "@/lib/json-utils";
 import { checkTopicDuplicate, registerTopic, getRecentTopics } from "@/lib/dedup";
+import { normalizeTags } from "@/lib/tags";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 export const maxDuration = 60;
@@ -77,6 +78,7 @@ export async function POST(req: NextRequest) {
     }
     const parsed = extractJSON(resultText);
     if (!parsed?.content_config?.qa?.length) return NextResponse.json({ error: "Invalid interview config", raw: resultText.slice(0,300) }, { status: 500 });
+    const tags = normalizeTags(Array.isArray(parsed.tags) ? parsed.tags : []);
     const { data: post, error: err } = await supabase.from("posts").insert({
       title_ar: strip(parsed.title_ar) || effectiveTopic,
       title_en: strip(parsed.title_en) || effectiveTopic,
@@ -86,6 +88,7 @@ export async function POST(req: NextRequest) {
       status: "published",
       category_id: cat.id,
       content_config: parsed.content_config,
+      tags,
       quality_score: 88,
       reading_time: 5,
       published_at: new Date().toISOString(),

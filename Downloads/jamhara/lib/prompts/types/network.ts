@@ -10,6 +10,7 @@
  */
 
 import { SOURCE_INSTRUCTION } from "../shared/sources";
+import { TAGS_INSTRUCTION } from "../shared/tags";
 
 export interface NetworkPromptParams {
   topic: string;
@@ -25,6 +26,7 @@ export function buildNetworkPrompt({ topic, categoryName }: NetworkPromptParams)
   "title_en": "Network Map Title",
   "body_ar": "مقدمة موجزة تشرح طبيعة العلاقات وأهميتها — 2-3 جمل",
   "body_en": "Brief intro explaining the relationships — 2-3 sentences",
+  "tags": ["وسم1", "وسم2", "..."],
   "content_config": {
     "center_ar": "اسم الجهة المركزية",
     "center_en": "Central Entity Name",
@@ -52,5 +54,5 @@ export function buildNetworkPrompt({ topic, categoryName }: NetworkPromptParams)
 }
 
 قواعد: 5-10 عقد مترابطة، تنوع في أنواع العلاقات (حليف/خصم/شريك/تابع...)، معلومات دقيقة وحقيقية.
-أرجع JSON فقط بدون أي نص إضافي.${SOURCE_INSTRUCTION}`;
+أرجع JSON فقط بدون أي نص إضافي.${TAGS_INSTRUCTION}${SOURCE_INSTRUCTION}`;
 }

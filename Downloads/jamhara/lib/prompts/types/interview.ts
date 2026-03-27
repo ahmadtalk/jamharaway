@@ -10,6 +10,7 @@
  */
 
 import { SOURCE_INSTRUCTION } from "../shared/sources";
+import { TAGS_INSTRUCTION } from "../shared/tags";
 
 export interface InterviewPromptParams {
   topic: string;
@@ -27,6 +28,7 @@ export function buildInterviewPrompt({ topic, categoryName }: InterviewPromptPar
   "title_en": "Interview Title",
   "body_ar": "سياق المقابلة وأهميتها — 2-3 جمل",
   "body_en": "Interview context and importance — 2-3 sentences",
+  "tags": ["وسم1", "وسم2", "..."],
   "content_config": {
     "interviewee_ar": "اسم الشخصية",
     "interviewee_en": "Person Name",
@@ -49,5 +51,5 @@ export function buildInterviewPrompt({ topic, categoryName }: InterviewPromptPar
 }
 
 قواعد: 6-8 أسئلة وأجوبة، أسئلة جريئة ومتنوعة (سياسية/شخصية/مستقبلية)، إجابات تعكس مواقف حقيقية موثقة، أسلوب صحفي احترافي.
-أرجع JSON فقط.${SOURCE_INSTRUCTION}`;
+أرجع JSON فقط.${TAGS_INSTRUCTION}${SOURCE_INSTRUCTION}`;
 }

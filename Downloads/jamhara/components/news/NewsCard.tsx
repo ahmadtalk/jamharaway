@@ -1,9 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import JCardShell from "@/components/shared/JCardShell";
-import type { PostWithRelations } from "@/lib/supabase/types";
+import type { PostWithRelations, NewsConfig } from "@/lib/supabase/types";
+
+// dynamic import — html-to-image لا يعمل في SSR
+const ShareCardModal = dynamic(() => import("./ShareCardModal"), { ssr: false });
 
 interface Props {
   post: PostWithRelations;
@@ -11,22 +15,17 @@ interface Props {
   timeAgoStr: string;
   isDetail?: boolean;
   index?: number;
+  tags?: string[];
 }
 
-interface NewsConfig {
-  source_name?: string;
-  source_url?: string;
-  gnews_url?: string;
-  gnews_published_at?: string;
-}
-
-export default function NewsCard({ post, locale, timeAgoStr, isDetail = false, index = 0 }: Props) {
+export default function NewsCard({ post, locale, timeAgoStr, isDetail = false, index = 0, tags }: Props) {
   const isAr = locale === "ar";
   const title = isAr ? post.title_ar : (post.title_en || post.title_ar);
-  const body  = isAr ? post.body_ar  : (post.body_en  || post.body_ar);
+  const lede  = isAr ? post.body_ar  : (post.body_en  || post.body_ar);
   const cfg   = (post.content_config as NewsConfig | null) ?? {};
 
-  const [imgErr, setImgErr] = useState(false);
+  const [imgErr, setImgErr]       = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const hasImage = !!post.image_url && !imgErr;
 
   const sourceName = cfg.source_name ?? "";
@@ -39,7 +38,14 @@ export default function NewsCard({ post, locale, timeAgoStr, isDetail = false, i
     ? { name_ar: post.category.name_ar, name_en: post.category.name_en, slug: post.category.slug, color: post.category.color }
     : undefined;
 
+  const keyPoints   = cfg.key_points_ar ?? [];
+  const whyMatters  = cfg.why_it_matters_ar;
+  const quote       = cfg.quote ?? null;
+  const whatsNext   = cfg.whats_next_ar;
+
+  // في feed: نعرض الـ lede فقط. في صفحة التفاصيل: نعرض الهيكل الكامل
   return (
+    <>
     <JCardShell
       postId={post.id}
       postType="news"
@@ -51,10 +57,14 @@ export default function NewsCard({ post, locale, timeAgoStr, isDetail = false, i
       parentCat={parentCat}
       sources={sources}
       likeCount={post.like_count}
+      tags={tags ?? post.tags ?? []}
     >
       {/* ── صورة الخبر ── */}
       {hasImage && (
-        <Link href={`/${locale === "en" ? "en/" : ""}p/${post.id}`} style={{ display: "block", marginBottom: 12, borderRadius: 10, overflow: "hidden", flexShrink: 0 }}>
+        <Link
+          href={`/${locale === "en" ? "en/" : ""}p/${post.id}`}
+          style={{ display: "block", marginBottom: 12, borderRadius: 10, overflow: "hidden" }}
+        >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={post.image_url!}
@@ -65,13 +75,13 @@ export default function NewsCard({ post, locale, timeAgoStr, isDetail = false, i
         </Link>
       )}
 
-      {/* ── شارة الخبر العاجل ── */}
-      {!isDetail && (
-        <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
+      {/* ── شارة المصدر + زر المشاركة ── */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
           <span style={{
-            fontSize: ".68rem", fontWeight: 700, letterSpacing: ".05em",
+            fontSize: ".67rem", fontWeight: 700, letterSpacing: ".04em",
             background: "#E05A2B15", color: "#E05A2B",
-            padding: "2px 8px", borderRadius: 20,
+            padding: "2px 9px", borderRadius: 20,
             border: "1px solid #E05A2B30",
           }}>
             {isAr ? "📰 خبر" : "📰 News"}
@@ -82,41 +92,177 @@ export default function NewsCard({ post, locale, timeAgoStr, isDetail = false, i
             </span>
           )}
         </div>
-      )}
-
-      {/* ── متن الخبر ── */}
-      {body && (
-        <div style={{
-          fontSize: isDetail ? "1rem" : ".88rem",
-          lineHeight: isDetail ? 1.9 : 1.75,
-          color: "var(--ink)",
-          display: "-webkit-box",
-          WebkitLineClamp: isDetail ? undefined : 5,
-          WebkitBoxOrient: isDetail ? undefined : "vertical" as const,
-          overflow: isDetail ? undefined : "hidden",
-        }}>
-          {body}
-        </div>
-      )}
-
-      {/* ── رابط المصدر الأصلي (في صفحة التفاصيل) ── */}
-      {isDetail && cfg.gnews_url && (
-        <div style={{ marginTop: 20, paddingTop: 16, borderTop: "1px solid var(--slate)" }}>
-          <a
-            href={cfg.gnews_url}
-            target="_blank"
-            rel="noopener noreferrer"
+        {/* زر مشاركة كصورة — يظهر فقط في صفحة التفاصيل */}
+        {isDetail && (
+          <button
+            onClick={() => setShareOpen(true)}
+            title={isAr ? "مشاركة كصورة" : "Share as image"}
             style={{
-              display: "inline-flex", alignItems: "center", gap: 6,
-              fontSize: ".82rem", color: "#E05A2B", fontWeight: 600,
-              textDecoration: "none",
+              display: "flex", alignItems: "center", gap: 5,
+              background: "var(--slate3)", border: "none",
+              borderRadius: 8, padding: "5px 11px",
+              cursor: "pointer", fontSize: ".75rem", fontWeight: 700,
+              color: "var(--muted)", transition: "background .15s",
             }}
+            onMouseEnter={e => (e.currentTarget.style.background = "var(--green-light)")}
+            onMouseLeave={e => (e.currentTarget.style.background = "var(--slate3)")}
           >
-            ↗ {isAr ? "قراءة المصدر الأصلي" : "Read Original Source"}
-            {sourceName && ` — ${sourceName}`}
-          </a>
-        </div>
+            <span>📸</span>
+            <span>{isAr ? "مشاركة" : "Share"}</span>
+          </button>
+        )}
+      </div>
+
+      {/* ── الـ Lede ── */}
+      {lede && (
+        <p style={{
+          fontSize: isDetail ? "1.05rem" : ".92rem",
+          lineHeight: 1.85,
+          color: "var(--ink)",
+          fontWeight: 500,
+          margin: "0 0 12px",
+        }}>
+          {lede}
+        </p>
+      )}
+
+      {/* ── محتوى Axios الكامل (صفحة التفاصيل فقط) ── */}
+      {isDetail && (
+        <>
+          {/* ما سبب أهميته؟ */}
+          {whyMatters && (
+            <div style={{
+              background: "var(--green-pale)",
+              border: "1px solid var(--green-light)",
+              borderRadius: 10,
+              padding: "12px 14px",
+              marginBottom: 14,
+            }}>
+              <div style={{
+                fontSize: ".72rem", fontWeight: 700, color: "var(--green-deep)",
+                marginBottom: 6, letterSpacing: ".04em",
+              }}>
+                {isAr ? "ما سبب أهميته؟" : "Why it matters"}
+              </div>
+              <p style={{ fontSize: ".93rem", lineHeight: 1.8, color: "var(--ink)", margin: 0 }}>
+                {whyMatters}
+              </p>
+            </div>
+          )}
+
+          {/* النقاط الرئيسية */}
+          {keyPoints.length > 0 && (
+            <div style={{ marginBottom: 14 }}>
+              <div style={{
+                fontSize: ".72rem", fontWeight: 700, color: "var(--ink)",
+                marginBottom: 8, letterSpacing: ".04em",
+                textTransform: "uppercase",
+              }}>
+                {isAr ? "النقاط الرئيسية" : "Key points"}
+              </div>
+              <ul style={{ margin: 0, padding: 0, listStyle: "none" }}>
+                {keyPoints.map((point, i) => (
+                  <li key={i} style={{
+                    display: "flex", gap: 10, alignItems: "flex-start",
+                    padding: "7px 0",
+                    borderBottom: i < keyPoints.length - 1 ? "1px solid var(--slate3)" : "none",
+                  }}>
+                    <span style={{
+                      width: 20, height: 20, flexShrink: 0,
+                      background: "var(--navy)", color: "#fff",
+                      borderRadius: "50%",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: ".65rem", fontWeight: 700,
+                      marginTop: 2,
+                    }}>
+                      {i + 1}
+                    </span>
+                    <span style={{ fontSize: ".92rem", lineHeight: 1.75, color: "var(--ink)" }}>
+                      {point}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* اقتباس بارز */}
+          {quote && quote.text_ar && (
+            <blockquote style={{
+              margin: "0 0 14px",
+              padding: "12px 16px",
+              borderRight: isAr ? "4px solid var(--navy)" : "none",
+              borderLeft: !isAr ? "4px solid var(--navy)" : "none",
+              background: "var(--slate3)",
+              borderRadius: "0 10px 10px 0",
+            }}>
+              <p style={{
+                fontSize: ".93rem", lineHeight: 1.8, color: "var(--ink)",
+                fontStyle: "italic", margin: "0 0 6px",
+              }}>
+                "{quote.text_ar}"
+              </p>
+              <footer style={{ fontSize: ".78rem", color: "var(--muted)", fontWeight: 600 }}>
+                — {quote.author_ar}
+                {quote.role_ar && <span style={{ fontWeight: 400 }}> · {quote.role_ar}</span>}
+              </footer>
+            </blockquote>
+          )}
+
+          {/* ما التالي؟ */}
+          {whatsNext && (
+            <div style={{
+              background: "#1E213008",
+              borderRadius: 10,
+              padding: "12px 14px",
+              marginBottom: 4,
+            }}>
+              <div style={{
+                fontSize: ".72rem", fontWeight: 700, color: "var(--ink)",
+                marginBottom: 6, letterSpacing: ".04em",
+              }}>
+                {isAr ? "ما التالي؟" : "What's next"}
+              </div>
+              <p style={{ fontSize: ".92rem", lineHeight: 1.8, color: "var(--ink)", margin: 0 }}>
+                {whatsNext}
+              </p>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* ── معاينة النقاط في feed (بدون isDetail) ── */}
+      {!isDetail && keyPoints.length > 0 && (
+        <ul style={{ margin: "8px 0 0", padding: 0, listStyle: "none" }}>
+          {keyPoints.slice(0, 3).map((point, i) => (
+            <li key={i} style={{
+              display: "flex", gap: 8, alignItems: "flex-start",
+              fontSize: ".83rem", lineHeight: 1.65, color: "var(--muted)",
+              padding: "4px 0",
+            }}>
+              <span style={{ color: "#E05A2B", fontWeight: 700, flexShrink: 0 }}>•</span>
+              <span>{point}</span>
+            </li>
+          ))}
+          {keyPoints.length > 3 && (
+            <li style={{ fontSize: ".78rem", color: "var(--muted)", paddingTop: 4 }}>
+              {isAr ? `+ ${keyPoints.length - 3} نقاط أخرى` : `+ ${keyPoints.length - 3} more`}
+            </li>
+          )}
+        </ul>
       )}
     </JCardShell>
+
+    {/* ── مودال المشاركة كصورة ── */}
+    {shareOpen && (
+      <ShareCardModal
+        title={title}
+        lede={lede ?? ""}
+        cfg={cfg}
+        imageUrl={post.image_url}
+        onClose={() => setShareOpen(false)}
+      />
+    )}
+    </>
   );
 }

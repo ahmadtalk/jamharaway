@@ -9,6 +9,7 @@
  */
 
 import { SOURCE_INSTRUCTION } from "../shared/sources";
+import { TAGS_INSTRUCTION } from "../shared/tags";
 
 export interface ExplainerPromptParams {
   topic: string;
@@ -24,6 +25,7 @@ export function buildExplainerPrompt({ topic, categorySlug }: ExplainerPromptPar
   "title_en": "Explainer: [Topic]",
   "body_ar": "جملة مقدمة واحدة توضح لماذا هذا الموضوع مهم",
   "body_en": "One intro sentence explaining why this topic matters",
+  "tags": ["وسم1", "وسم2", "..."],
   "content_config": {
     "intro_ar": "مقدمة موجزة للموضوع من جملتين",
     "intro_en": "Brief 2-sentence intro to the topic",
@@ -46,5 +48,5 @@ export function buildExplainerPrompt({ topic, categorySlug }: ExplainerPromptPar
 - كل سؤال يشرح جانباً مختلفاً من الموضوع
 - كل إجابة من 2 إلى 4 جمل مفيدة وموضوعية
 - استخدم emoji مناسب لكل سؤال
-- نص بدون HTML${SOURCE_INSTRUCTION}`;
+- نص بدون HTML${TAGS_INSTRUCTION}${SOURCE_INSTRUCTION}`;
 }

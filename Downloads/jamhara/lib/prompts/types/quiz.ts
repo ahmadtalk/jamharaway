@@ -11,6 +11,7 @@
 
 import type { QuizType } from "@/lib/supabase/types";
 import { SOURCE_INSTRUCTION } from "../shared/sources";
+import { TAGS_INSTRUCTION } from "../shared/tags";
 
 export interface QuizPromptParams {
   /** الموضوع الفعّال */
@@ -37,7 +38,8 @@ export function buildQuizPrompt({
 **ابحث أولاً** في الإنترنت عن أحدث المعلومات الموثوقة، ثم أنتج JSON فقط بدون markdown أو نص إضافي.
 
 الحقول العامة المطلوبة دائماً:
-{ "title_ar": "عنوان مثير بالعربية", "title_en": "Catchy title in English", "difficulty": "${difficultyEn}", "source": "اسم المصدر", "sourceUrl": "https://رابط-حقيقي-من-نتائج-البحث" }${SOURCE_INSTRUCTION}`;
+{ "title_ar": "عنوان مثير بالعربية", "title_en": "Catchy title in English", "difficulty": "${difficultyEn}", "tags": ["وسم1", "وسم2", ...], "source": "اسم المصدر", "sourceUrl": "https://رابط-حقيقي-من-نتائج-البحث" }
+${TAGS_INSTRUCTION}${SOURCE_INSTRUCTION}`;
 
   switch (quizType) {
 

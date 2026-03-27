@@ -20,6 +20,7 @@ interface Props {
   isDetail?: boolean;
   parentCat?: { name_ar: string; name_en: string; slug: string; color?: string };
   subCat?: { name_ar: string; name_en: string; slug: string };
+  tags?: string[];
 }
 
 const ACCENT = "#B45309";
@@ -29,7 +30,7 @@ export default function ExplainerCard({
   id, title, body, config,
   categoryName, categorySlug, categoryColor,
   likeCount, locale, timeAgoStr, isDetail = false,
-  parentCat, subCat,
+  parentCat, subCat, tags,
 }: Props) {
   const isAr = locale === "ar";
 
@@ -57,6 +58,7 @@ export default function ExplainerCard({
       subCat={subCat}
       sourceUrl={sourceUrl}
       likeCount={likeCount}
+      tags={tags}
     >
       {/* Intro — feed only */}
       {!isDetail && (config.intro_ar || config.intro_en) && (

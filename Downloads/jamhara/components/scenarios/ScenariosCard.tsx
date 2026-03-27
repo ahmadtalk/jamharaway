@@ -19,6 +19,7 @@ interface Props {
   // New unified props
   parentCat?: { name_ar: string; name_en: string; slug: string; color?: string };
   subCat?: { name_ar: string; name_en: string; slug: string };
+  tags?: string[];
 }
 
 const TONE_CONFIG: Record<ScenarioTone, {
@@ -38,7 +39,7 @@ export default function ScenariosCard({
   id, title, body, config,
   categoryName, categorySlug, categoryColor = "#0891B2",
   likeCount, locale, timeAgoStr, isDetail = false,
-  parentCat, subCat,
+  parentCat, subCat, tags,
 }: Props) {
   const isAr = locale === "ar";
 
@@ -63,6 +64,7 @@ export default function ScenariosCard({
       subCat={subCat}
       sourceUrl={sourceUrl}
       likeCount={likeCount}
+      tags={tags}
     >
       {/* Body — moved to top (feed only) */}
       {!isDetail && body && body.replace(/<[^>]*>/g, "").trim() && (

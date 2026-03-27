@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import type { QuizType } from "@/lib/supabase/types";
 import { buildQuizPrompt } from "@/lib/prompts";
 import { checkTopicDuplicate, registerTopic, getRecentTopics } from "@/lib/dedup";
+import { normalizeTags } from "@/lib/tags";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 function isAuthorized(req: NextRequest) {
@@ -157,6 +158,7 @@ export async function POST(req: NextRequest) {
     source: parsed.source,
     sourceUrl: parsed.sourceUrl,
   };
+  const tags = normalizeTags(Array.isArray(parsed.tags) ? parsed.tags : []);
   const { data: post, error } = await supabase.from("posts").insert({
     title_ar: stripTags(parsed.title_ar ?? `اختبار: ${topic}`),
     title_en: stripTags(parsed.title_en ?? `Quiz: ${topic}`),
@@ -167,6 +169,7 @@ export async function POST(req: NextRequest) {
     chart_config: null,
     category_id: cat.id,
     status: "published",
+    tags,
     quality_score: 88,
     like_count: 0, share_count: 0, view_count: 0,
     reading_time: 3, is_featured: false,

@@ -10,6 +10,7 @@
  */
 
 import { SOURCE_INSTRUCTION } from "../shared/sources";
+import { TAGS_INSTRUCTION } from "../shared/tags";
 
 export interface QuotesPromptParams {
   topic: string;
@@ -25,13 +26,18 @@ export function buildQuotesPrompt({ topic, categorySlug, useWebSearch = false }:
 
   return `أنت صحفي في منصة "جمهرة". اجمع اقتباسات بارزة حول: ${topic} (قسم: ${categorySlug})
 
-**مهم: أرجع JSON صالحاً فقط — بدون أي نص قبله أو بعده.**
+**تعليمات حرجة للإخراج:**
+- أرجع JSON صالحاً فقط — لا نص قبله ولا بعده ولا مقدمة ولا ملاحظات
+- لا تستخدم markdown أو \`\`\`json
+- تأكد من هروب علامات الاقتباس المزدوجة داخل النصوص بـ \\"
+- جميع القيم نصوص عادية بدون HTML
 
 {
   "title_ar": "اقتباسات: [الموضوع]",
   "title_en": "Quotes: [Topic]",
   "body_ar": "جملة مقدمة واحدة تُطار الموضوع",
   "body_en": "One intro sentence framing the topic",
+  "tags": ["وسم1", "وسم2", "..."],
   "content_config": {
     "topic_ar": "الموضوع بالعربية",
     "topic_en": "Topic in English",
@@ -56,5 +62,6 @@ export function buildQuotesPrompt({ topic, categorySlug, useWebSearch = false }:
 - 5 إلى 8 اقتباسات من أشخاص حقيقيين بتواريخ حقيقية
 - sentiment: "positive" | "negative" | "neutral" | "warning" — تنوّع في المشاعر
 - نص بدون HTML
+${TAGS_INSTRUCTION}
 ${sourceNote}`;
 }

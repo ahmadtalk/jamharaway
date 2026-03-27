@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { buildProfilePrompt } from "@/lib/prompts";
 import { extractJSON } from "@/lib/json-utils";
 import { checkTopicDuplicate, registerTopic, getRecentTopics } from "@/lib/dedup";
+import { normalizeTags } from "@/lib/tags";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 export const maxDuration = 60;
@@ -88,6 +89,7 @@ export async function POST(req: NextRequest) {
     if (cfg.image_url && !String(cfg.image_url).startsWith("https")) {
       cfg.image_url = "";
     }
+    const tags = normalizeTags(Array.isArray(parsed.tags) ? parsed.tags : []);
     const { data: post, error: err } = await supabase.from("posts").insert({
       title_ar: strip(parsed.title_ar) || effectiveTopic,
       title_en: strip(parsed.title_en) || effectiveTopic,
@@ -97,6 +99,7 @@ export async function POST(req: NextRequest) {
       status: "published",
       category_id: cat.id,
       content_config: cfg,
+      tags,
       quality_score: 88,
       reading_time: 3,
       published_at: new Date().toISOString(),

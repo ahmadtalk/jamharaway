@@ -9,6 +9,7 @@
  */
 
 import { SOURCE_INSTRUCTION } from "../shared/sources";
+import { TAGS_INSTRUCTION } from "../shared/tags";
 
 export interface ScenariosPromptParams {
   topic: string;
@@ -18,12 +19,18 @@ export interface ScenariosPromptParams {
 export function buildScenariosPrompt({ topic, categorySlug }: ScenariosPromptParams): string {
   return `أنت محرر تحليلي في منصة "جمهرة". أنشئ تحليل سيناريوهات مستقبلية عن: ${topic} (قسم: ${categorySlug})
 
-أرجع JSON صالحاً فقط:
+**تعليمات حرجة للإخراج:**
+- أرجع JSON صالحاً فقط — لا نص قبله ولا بعده ولا مقدمة ولا ملاحظات
+- لا تستخدم markdown أو \`\`\`json
+- جميع القيم نصوص عادية بدون HTML
+
+أرجع هذا JSON بالضبط:
 {
   "title_ar": "عنوان تحليلي — مثال: ماذا سيحدث للدولار؟ ثلاثة سيناريوهات",
   "title_en": "Analytical title",
   "body_ar": "مقدمة تحليلية 2-3 جمل نص عادي",
   "body_en": "Analytical intro 2-3 sentences plain text",
+  "tags": ["وسم1", "وسم2", "..."],
   "content_config": {
     "question_ar": "ماذا سيحدث لـ...؟ صياغة واضحة",
     "question_en": "What will happen to...? Clear phrasing",
@@ -70,5 +77,5 @@ export function buildScenariosPrompt({ topic, categorySlug }: ScenariosPromptPar
 - السيناريوهات الثلاثة بالضبط: optimistic, realistic, pessimistic
 - النسب المئوية تجمع إلى 100%
 - الشروط: 2-4 نقاط لكل سيناريو
-- نص موضوعي بدون HTML${SOURCE_INSTRUCTION}`;
+- نص موضوعي بدون HTML${TAGS_INSTRUCTION}${SOURCE_INSTRUCTION}`;
 }

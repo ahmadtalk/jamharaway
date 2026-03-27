@@ -9,10 +9,11 @@ interface Props {
   timeAgoStr: string;
   isDetail?: boolean;
   index?: number;
+  tags?: string[];
 }
 
 export default function ArticleCard({
-  post, locale, timeAgoStr, isDetail = false, index = 0,
+  post, locale, timeAgoStr, isDetail = false, index = 0, tags,
 }: Props) {
   const isAr = locale === "ar";
   const title = isAr ? post.title_ar : (post.title_en || post.title_ar);
@@ -57,6 +58,7 @@ export default function ArticleCard({
       subCat={subCat}
       sources={sources}
       likeCount={post.like_count}
+      tags={tags}
     >
       {/* Image */}
       {post.image_url && (

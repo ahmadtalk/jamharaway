@@ -9,6 +9,7 @@
  */
 
 import { SOURCE_INSTRUCTION } from "../shared/sources";
+import { TAGS_INSTRUCTION } from "../shared/tags";
 
 export interface DebatePromptParams {
   topic: string;
@@ -24,6 +25,7 @@ export function buildDebatePrompt({ topic, categorySlug }: DebatePromptParams): 
   "title_en": "Debate: [Topic]",
   "body_ar": "جملة مقدمة واحدة تُطار القضية الخلافية",
   "body_en": "One intro sentence framing the controversy",
+  "tags": ["وسم1", "وسم2", "..."],
   "content_config": {
     "question_ar": "السؤال الجوهري للمناظرة",
     "question_en": "Core debate question in English",
@@ -60,5 +62,5 @@ export function buildDebatePrompt({ topic, categorySlug }: DebatePromptParams): 
 - 4 إلى 5 حجج لكل جانب، متوازنة ومتكافئة في القوة
 - الحجج مبنية على حقائق وأدلة موثقة
 - الخلاصة (verdict) محايدة تماماً وتحليلية وليست منحازة لأي جانب
-- نص بدون HTML${SOURCE_INSTRUCTION}`;
+- نص بدون HTML${TAGS_INSTRUCTION}${SOURCE_INSTRUCTION}`;
 }

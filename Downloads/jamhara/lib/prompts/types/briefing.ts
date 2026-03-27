@@ -9,6 +9,7 @@
  */
 
 import { SOURCE_INSTRUCTION } from "../shared/sources";
+import { TAGS_INSTRUCTION } from "../shared/tags";
 
 export interface BriefingPromptParams {
   topic: string;
@@ -24,6 +25,7 @@ export function buildBriefingPrompt({ topic, categorySlug }: BriefingPromptParam
   "title_en": "Briefing: [Topic]",
   "body_ar": "مقدمة سياقية من 2-3 جمل نص عادي",
   "body_en": "2-3 sentence context plain text",
+  "tags": ["وسم1", "وسم2", "..."],
   "content_config": {
     "key_points": [
       {"text_ar": "نقطة رئيسية بالعربية", "text_en": "Key point in English", "icon": "emoji"}
@@ -50,5 +52,5 @@ export function buildBriefingPrompt({ topic, categorySlug }: BriefingPromptParam
 - 5 إلى 7 نقاط في key_points، كل نقطة موجزة وواضحة
 - 3 إلى 4 أرقام في key_numbers — أرقام حقيقية موثقة
 - اقتباس واحد بارز من شخصية حقيقية إن أمكن
-- نص بدون HTML${SOURCE_INSTRUCTION}`;
+- نص بدون HTML${TAGS_INSTRUCTION}${SOURCE_INSTRUCTION}`;
 }

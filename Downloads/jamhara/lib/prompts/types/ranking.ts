@@ -9,6 +9,7 @@
  */
 
 import { SOURCE_INSTRUCTION } from "../shared/sources";
+import { TAGS_INSTRUCTION } from "../shared/tags";
 
 export interface RankingPromptParams {
   /** الموضوع الفعّال */
@@ -26,6 +27,7 @@ export function buildRankingPrompt({ topic, categorySlug }: RankingPromptParams)
   "title_en": "Title in English",
   "body_ar": "تحليل مختصر 2-3 جمل نص عادي",
   "body_en": "Short analysis 2-3 sentences plain text",
+  "tags": ["وسم1", "وسم2", ...],
   "content_config": {
     "metric_ar": "معيار التصنيف — مثال: الناتج المحلي الإجمالي",
     "metric_en": "Ranking metric — e.g. GDP",
@@ -53,5 +55,6 @@ export function buildRankingPrompt({ topic, categorySlug }: RankingPromptParams)
 - 8 إلى 15 عنصراً في القائمة
 - change: "up" أو "down" أو "same" — واقعي
 - value: رقم حقيقي أو نص
-- نص بدون HTML${SOURCE_INSTRUCTION}`;
+- نص بدون HTML
+${TAGS_INSTRUCTION}${SOURCE_INSTRUCTION}`;
 }

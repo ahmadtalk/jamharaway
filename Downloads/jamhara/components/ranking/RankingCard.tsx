@@ -21,6 +21,7 @@ interface Props {
   // New unified props
   parentCat?: { name_ar: string; name_en: string; slug: string; color?: string };
   subCat?: { name_ar: string; name_en: string; slug: string };
+  tags?: string[];
 }
 
 const GOLD   = "#F59E0B";
@@ -40,7 +41,7 @@ export default function RankingCard({
   id, title, body, config,
   categoryName, categorySlug, categoryColor,
   likeCount, locale, timeAgoStr, isDetail,
-  parentCat, subCat,
+  parentCat, subCat, tags,
 }: Props) {
   const isAr = locale === "ar";
   const [mounted, setMounted] = useState(false);
@@ -74,6 +75,7 @@ export default function RankingCard({
       subCat={subCat}
       sourceUrl={sourceUrl}
       likeCount={likeCount}
+      tags={tags}
     >
       {/* Body — moved to top (feed only) */}
       {!isDetail && body && body.replace(/<[^>]*>/g, "").trim() && (

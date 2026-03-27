@@ -1166,6 +1166,32 @@ a.home-hero-stat-pill:hover {
   z-index: 1;
 }
 
+/* ── Tags chips ─────────────────────────────────────────────────────── */
+.jcard-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: .6rem .9rem .5rem;
+  border-top: 1px solid var(--slate3, #EDF1F5);
+}
+.jcard-tag {
+  display: inline-block;
+  font-size: .72rem;
+  font-weight: 600;
+  color: var(--muted, #6B7280);
+  background: var(--slate3, #EDF1F5);
+  border-radius: 20px;
+  padding: 2px 10px;
+  text-decoration: none;
+  transition: background .15s, color .15s;
+  white-space: nowrap;
+}
+.jcard-tag::before { content: "#"; opacity: .5; }
+.jcard-tag:hover {
+  background: var(--green-light, #E8F6ED);
+  color: var(--green-deep, #2D7A46);
+}
+
 /* ── Verify / Flag modal ────────────────────────────────────────────── */
 .jflag-overlay {
   position: fixed;

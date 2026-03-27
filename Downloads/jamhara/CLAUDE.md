@@ -1139,7 +1139,48 @@ id, topic_normalized, topic_original, post_type, category_slug, post_id, generat
 - Dedup: بـ `source_url` column في DB (لا trigram)
 - **⚠️ يجب ضبط cron-job.org لاستدعاء `/api/cron/fetch-news` كل 15 دقيقة**
 
+### جلسة مارس 2026 — المجموعة العاشرة (نظام الوسوم SEO + أسلوب Axios للأخبار + بطاقة المشاركة)
+
+**نظام الوسوم (SEO Tags) — 19 نوعاً:**
+- [x] `lib/prompts/shared/tags.ts` — `TAGS_INSTRUCTION` مشترك: 5-10 وسوم عربية إلزامية في JSON
+- [x] جميع 18 برومبت builder يُنتج `"tags": [...]` في JSON الناتج
+- [x] `lib/tags.ts` — `normalizeTags()` + `tagToSlug()` + `slugToTag()` + `tagHref()`
+- [x] جميع 19 route handler تستخرج وسوم وتحفظها في `posts.tags`
+- [x] `components/shared/JCardShell.tsx` — prop `tags` + rendering كـ `#chips` مع رابط
+- [x] `app/globals.css` — `.jcard-tags` + `.jcard-tag` (chip style + hover)
+- [x] جميع 19 card component تمرر `tags` لـ JCardShell
+- [x] `components/feed/PostCard.tsx` — `tags: post.tags ?? []` في sharedProps
+- [x] `app/[locale]/tag/[slug]/page.tsx` — صفحة وسم: `.contains("tags", [tag])` + SEO كامل
+
+**أسلوب Axios Smart Brevity للأخبار:**
+- [x] `lib/prompts/types/news.ts` v2.0 — هيكل JSON جديد: `lede_ar` + `why_it_matters_ar` + `key_points_ar[]` + `quote?` + `whats_next_ar?`
+- [x] `lib/supabase/types.ts` — توسيع `NewsConfig` بـ 4 حقول Axios + `NewsQuote` interface
+- [x] `app/api/generate-news/route.ts` — وضع يدوي (context) + وضع GNews + استخراج og:image + حفظ هيكل Axios في `content_config`
+- [x] `app/api/cron/fetch-news/route.ts` — نفس التحديث للكرون التلقائي
+- [x] `components/news/NewsCard.tsx` — تصميم Axios في التفاصيل: لده + "ما سبب أهميته؟" (خلفية خضراء) + نقاط مرقمة + blockquote + "ما التالي؟"؛ في Feed: لده + 3 نقاط بنقاط برتقالية
+
+**بطاقة المشاركة الاجتماعية (Share Card) — للخبر:**
+- [x] `app/api/image-proxy/route.ts` — proxy لحل CORS على الصور الخارجية
+- [x] `components/news/ShareCard.tsx` — بطاقة مشاركة مخصصة (inline styles):
+  - 3 قياسات: مربع 1080×1080، أفقي 1200×628 (عمودين)، ستوري 1080×1920
+  - هيدر: شعار `/logo.png` (base64 data URL) + سلوغن "قيمة المرء ما يعرفه"
+  - محتوى: عنوان + لده + نقاط مرقمة + "ما سبب أهميته؟" (story فقط)
+  - فوتر: المصدر + jamhara.com (سطر واحد)
+- [x] `components/news/ShareCardModal.tsx` — مودال المعاينة والتحميل:
+  - `toDataUrl()` — يُحوّل logo + صورة الخبر لـ base64 (يحل CORS)
+  - `buildFontEmbedCSS()` — يستخرج خطوط next/font من stylesheets ويُضمّنها يدوياً (تجاوز bug html-to-image)
+  - معاينة مُصغَّرة بـ CSS transform + `pixelRatio: 2` (دقة 2160×2160 للمربع)
+  - `skipFonts: true` + `fontEmbedCSS` — الحل الصحيح لـ TypeError في Firefox
+- [x] `components/news/NewsCard.tsx` — زر "📸 مشاركة" في صفحة التفاصيل
+- [x] `html-to-image@1.11.13` — dependency جديد
+
+**ملاحظات تقنية مهمة:**
+- `html-to-image` يتعطل على `@font-face` rules من `next/font` بسبب bug → الحل: `skipFonts: true` + `fontEmbedCSS` مبني يدوياً
+- الشعار يجب أن يكون base64 data URL في ShareCard (ليس `/logo.png`) وإلا html-to-image لا يُضمّنه
+- `pixelRatio: 2` = 4× البكسل الكلية = جودة مثالية للنشر الاجتماعي
+
 ### قيد الانتظار (مقترحات للمستقبل)
+- [ ] **تعميم بطاقة المشاركة على باقي 18 نوع** — الخطوة التالية المحددة
 - [ ] إعداد cron-job.org لـ /api/cron/fetch-news كل 15 دقيقة
 - [ ] إشعارات بريد عند فشل جدولة (Resend/SendGrid)
 - [ ] تحسين صفحة المنشور — تصميم أغنى + منشورات مقترحة ذكية
@@ -1246,6 +1287,7 @@ git reset --hard ae79f0e
 | `ae79f0e` | مارس 2026 | **قبل إعادة التصميم الكبرى** — 7 مجموعات كاملة |
 | `76b219d` | مارس 2026 | **المجموعة الثامنة** — dedup كامل + محرر البروفايل + برومبت v2.1 |
 | `a193e3c` | مارس 2026 | **المجموعة التاسعة** — ميزة الأخبار الكاملة (GNews + NewsCard + /news page) |
+| `TBD` | مارس 2026 | **المجموعة العاشرة** — SEO Tags (19 نوع) + Axios Smart Brevity + Share Card للأخبار |
 
 ### محتوى `ae79f0e`
 - 18 نوع محتوى، 43 قالب، جميع الـ routes والمكونات
@@ -1265,4 +1307,4 @@ git reset --hard ae79f0e
 
 ---
 
-*آخر تحديث: مارس 2026 — المجموعة التاسعة: ميزة الأخبار الكاملة — GNews + NewsCard + /news page + cron + DB*
+*آخر تحديث: مارس 2026 — المجموعة العاشرة: SEO Tags (19 نوع) + Axios Smart Brevity + Share Card للأخبار (3 قياسات، 2160px، خطوط مُضمَّنة)*

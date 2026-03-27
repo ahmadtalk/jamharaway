@@ -10,6 +10,7 @@
  */
 
 import { SOURCE_INSTRUCTION } from "../shared/sources";
+import { TAGS_INSTRUCTION } from "../shared/tags";
 
 export interface FactcheckPromptParams {
   topic: string;
@@ -25,6 +26,7 @@ export function buildFactcheckPrompt({ topic, categorySlug }: FactcheckPromptPar
   "title_en": "Title",
   "body_ar": "مقدمة التحقق 2-3 جمل نص عادي",
   "body_en": "Fact-check intro 2-3 sentences plain text",
+  "tags": ["وسم1", "وسم2", "..."],
   "content_config": {
     "claims": [
       {
@@ -46,5 +48,5 @@ export function buildFactcheckPrompt({ topic, categorySlug }: FactcheckPromptPar
 - verdict: "true" | "false" | "misleading" | "partial" | "unverified"
 - تنوّع الأحكام — لا تجعل كل شيء صحيحاً أو كل شيء خاطئاً
 - sources: 1-3 مصادر مختصرة لكل ادعاء
-- موضوعي، مبني على أدلة، نص بدون HTML${SOURCE_INSTRUCTION}`;
+- موضوعي، مبني على أدلة، نص بدون HTML${TAGS_INSTRUCTION}${SOURCE_INSTRUCTION}`;
 }

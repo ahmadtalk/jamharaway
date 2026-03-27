@@ -9,6 +9,7 @@
  */
 
 import { SOURCE_INSTRUCTION } from "../shared/sources";
+import { TAGS_INSTRUCTION } from "../shared/tags";
 
 export interface GuidePromptParams {
   /** الموضوع — يُستخدم اسم التصنيف بالعربية كما في الـ route الأصلي */
@@ -25,6 +26,7 @@ export function buildGuidePrompt({ topic, categoryName }: GuidePromptParams): st
   "title_en": "Guide Title in English",
   "body_ar": "مقدمة موجزة تشرح الهدف من الدليل — جملتان أو ثلاث",
   "body_en": "Brief intro explaining the guide goal — 2-3 sentences",
+  "tags": ["وسم1", "وسم2", "..."],
   "content_config": {
     "goal_ar": "ما ستتعلمه أو تحققه بعد اتباع هذه الخطوات",
     "goal_en": "What you will learn or achieve after following these steps",
@@ -51,5 +53,5 @@ export function buildGuidePrompt({ topic, categoryName }: GuidePromptParams): st
 }
 
 قواعد: 5-9 خطوات، كل خطوة عملية وقابلة للتنفيذ، icon مناسب لكل خطوة، difficulty مناسبة للموضوع.
-أرجع JSON فقط بدون أي نص إضافي.${SOURCE_INSTRUCTION}`;
+أرجع JSON فقط بدون أي نص إضافي.${TAGS_INSTRUCTION}${SOURCE_INSTRUCTION}`;
 }

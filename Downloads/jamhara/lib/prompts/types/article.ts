@@ -27,6 +27,7 @@
  */
 
 import { SOURCE_INSTRUCTION } from "../shared/sources";
+import { TAGS_INSTRUCTION } from "../shared/tags";
 
 export interface ArticlePromptParams {
   /** الموضوع المحدد — إن لم يُوفَّر يختار Claude موضوعاً مناسباً */
@@ -148,7 +149,9 @@ ${topicLine}${contextLine}${avoidSection}
   "body_en": "Full article in English — same structure — 100 to 160 words",
   "sources": [
     { "name": "اسم المصدر كما يظهر في الموقع", "url": "https://رابط-حقيقي-من-بحثك-الفعلي" }
-  ]
+  ],
+  "tags": ["وسم1", "وسم2", ...]
 }
-ملاحظة sources: مصدر واحد على الأقل — 3 مصادر كحد أقصى — روابط حقيقية فقط.${SOURCE_INSTRUCTION}`;
+ملاحظة sources: مصدر واحد على الأقل — 3 مصادر كحد أقصى — روابط حقيقية فقط.
+${TAGS_INSTRUCTION}${SOURCE_INSTRUCTION}`;
 }

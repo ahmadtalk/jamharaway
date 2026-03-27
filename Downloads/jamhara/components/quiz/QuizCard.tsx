@@ -27,6 +27,7 @@ interface Props {
   // New unified props
   parentCat?: { name_ar: string; name_en: string; slug: string; color?: string };
   subCat?: { name_ar: string; name_en: string; slug: string };
+  tags?: string[];
 }
 
 // Quiz type metadata
@@ -43,7 +44,7 @@ export default function QuizCard({
   id, title, config,
   categoryName, categorySlug, categoryColor = "#4CB36C",
   likeCount, locale, timeAgoStr, isDetail = false,
-  parentCat, subCat,
+  parentCat, subCat, tags,
 }: Props) {
   const questions = config.questions ?? [];
   const quizType: QuizType = config.quiz_type ?? "mcq";
@@ -199,6 +200,7 @@ export default function QuizCard({
       subCat={subCat}
       sourceUrl={sourceUrl}
       likeCount={likeCount}
+      tags={tags}
     >
       {/* Feed: show intro only */}
       {!isDetail ? (

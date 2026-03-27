@@ -5,6 +5,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { fmt, getSessionId, postUrl } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { useIsEmbed } from "@/components/embed/EmbedProvider";
+import { tagHref } from "@/lib/tags";
 
 /* ── Type config ─────────────────────────────────────────────────────────── */
 export const TYPE_CONFIG: Record<string, { color: string; label_ar: string; label_en: string }> = {
@@ -73,6 +74,7 @@ export interface JCardShellProps {
   sourceUrl?: string;   // legacy — single source URL
   sourceName?: string;  // legacy — single source name
   sources?: { name: string; url: string }[];  // preferred — array of real sources
+  tags?: string[];      // SEO tags — clickable chips
   likeCount: number;
   children: React.ReactNode;
 }
@@ -81,7 +83,7 @@ export interface JCardShellProps {
 export default function JCardShell({
   postId, postType, typeLabel_ar, typeLabel_en,
   title, locale, timeAgoStr, isDetail = false, index = 0,
-  parentCat, subCat, sourceUrl, sourceName, sources, likeCount, children,
+  parentCat, subCat, sourceUrl, sourceName, sources, tags, likeCount, children,
 }: JCardShellProps) {
   const isAr = locale === "ar";
   const isEmbed = useIsEmbed();
@@ -468,6 +470,17 @@ export default function JCardShell({
         </button>
       </div>
       )} {/* end isEmbed ternary */}
+
+      {/* ── Tags ─────────────────────────────────────────────────────── */}
+      {tags && tags.length > 0 && !isEmbed && (
+        <div className="jcard-tags">
+          {tags.map(tag => (
+            <Link key={tag} href={tagHref(tag, locale)} className="jcard-tag">
+              {tag}
+            </Link>
+          ))}
+        </div>
+      )}
 
       {/* ── Verify / Flag modal ──────────────────────────────────────── */}
       {verifyOpen && (

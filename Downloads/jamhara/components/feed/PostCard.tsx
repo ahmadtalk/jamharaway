@@ -73,6 +73,7 @@ export default function PostCard({ post, index = 0 }: Props) {
     isDetail: false as const,
     parentCat,
     subCat,
+    tags: post.tags ?? [],
   };
 
   // ── Chart ────────────────────────────────────────────────────────────────

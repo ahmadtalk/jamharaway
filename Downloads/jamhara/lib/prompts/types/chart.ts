@@ -11,6 +11,7 @@
  */
 
 import { SOURCE_INSTRUCTION } from "../shared/sources";
+import { TAGS_INSTRUCTION } from "../shared/tags";
 
 // ── تسميات أنواع المخططات ─────────────────────────────────────────────────────
 // لإضافة نوع جديد: أضف مدخلاً هنا وسيظهر تلقائياً في الـ auto instruction
@@ -81,6 +82,7 @@ ${chartTypeInstruction}
   "title_en": "Precise English title",
   "body_ar": "تحليل من 4-6 جمل يشرح أبرز الاستنتاجات والاتجاهات والمفاجآت في البيانات",
   "body_en": "4-6 sentence analytical description in English",
+  "tags": ["وسم1", "وسم2", ...],
   "chart_config": {
     "chartType": "area|line|bar|pie|donut|scatter|radar|composed",
     "stats": [
@@ -114,5 +116,6 @@ ${chartTypeInstruction}
 - annotations: 2-4 نقاط مهمة فقط (أحداث، ذروات، تحولات)
 - لا تضع أكثر من 8 فئات في pie أو donut
 - أرجع JSON فقط، بدون markdown أو نص قبله أو بعده
-- النص في body_ar وbody_en يجب أن يكون نصاً عادياً فقط، بدون أي وسوم HTML أو XML أو citation tags من أي نوع${SOURCE_INSTRUCTION}`;
+- النص في body_ar وbody_en يجب أن يكون نصاً عادياً فقط، بدون أي وسوم HTML أو XML أو citation tags من أي نوع
+${TAGS_INSTRUCTION}${SOURCE_INSTRUCTION}`;
 }

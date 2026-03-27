@@ -12,6 +12,7 @@
  */
 
 import { SOURCE_INSTRUCTION } from "../shared/sources";
+import { TAGS_INSTRUCTION } from "../shared/tags";
 
 export interface ProfilePromptParams {
   topic: string;
@@ -34,6 +35,7 @@ export function buildProfilePrompt({ topic, categoryName, recentTopics }: Profil
   "title_en": "Profile: [Name in English]",
   "body_ar": "3-4 جمل تفتح بحدث راهن من آخر 90 يوماً (قرار/فوز/تصريح/تعيين...) ثم تُقدّم الشخصية — أرقام وتواريخ إن أمكن — نص عادي بلا HTML",
   "body_en": "3-4 sentences opening with a recent event from the last 90 days — plain text with numbers/dates",
+  "tags": ["وسم1", "وسم2", ...],
   "content_config": {
     "subject_type": "person|organization|country|movement|other",
     "full_name_ar": "الاسم الكامل الرسمي",
@@ -74,5 +76,6 @@ export function buildProfilePrompt({ topic, categoryName, recentTopics }: Profil
 - sections (3-5): كل قسم 60-100 كلمة + رقم أو تاريخ إلزامي + قسم "الجدل والانتقادات" إلزامي
 - محظور في sections: "يُعدّ" / "دور محوري" / "تحديات جسيمة" / "أثر بالغ" / "في ظل" / "آفاق واسعة"
 - tagline: ❌ "سياسي بارز ومؤثر" — ✅ "أطول رئيس وزراء يبقى في منصبه في تاريخ اليابان الحديث"
-- أرجع JSON فقط بدون أي نص قبله أو بعده${SOURCE_INSTRUCTION}`;
+- أرجع JSON فقط بدون أي نص قبله أو بعده
+${TAGS_INSTRUCTION}${SOURCE_INSTRUCTION}`;
 }

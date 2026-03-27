@@ -6,6 +6,7 @@ import { createHash } from "crypto";
 import { buildArticlePrompt } from "@/lib/prompts";
 import { ARTICLE_MODEL, EVAL_MODEL } from "@/lib/ai-config";
 import { checkTopicDuplicate, registerTopic, getRecentTopics } from "@/lib/dedup";
+import { normalizeTags } from "@/lib/tags";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -205,6 +206,7 @@ export async function POST(req: NextRequest) {
         hash_fingerprint: fingerprint,
         reading_time: Math.max(1, Math.ceil(generatedPost.body_ar.split(" ").length / 200)),
         published_at: new Date().toISOString(),
+        tags: generatedPost.tags,
         // Store real sources from web search in content_config
         content_config: generatedPost.sources.length > 0
           ? { sources: generatedPost.sources } as unknown as null
@@ -368,6 +370,7 @@ async function generatePost(
     title_en: (parsed.title_en ?? "") as string,
     body_en: (parsed.body_en ?? "") as string,
     sources: cleanSources,
+    tags: normalizeTags(Array.isArray(parsed.tags) ? parsed.tags : []),
     usage: firstUsage,
   };
 }

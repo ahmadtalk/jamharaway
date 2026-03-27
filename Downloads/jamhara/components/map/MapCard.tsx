@@ -19,6 +19,7 @@ interface Props {
   isDetail?: boolean;
   parentCat?: { name_ar: string; name_en: string; slug: string; color?: string };
   subCat?: { name_ar: string; name_en: string; slug: string };
+  tags?: string[];
 }
 
 const ACCENT = "#059669";
@@ -34,7 +35,7 @@ export default function MapCard({
   id, title, body, config,
   categoryName, categorySlug, categoryColor,
   likeCount, locale, timeAgoStr, isDetail = false,
-  parentCat, subCat,
+  parentCat, subCat, tags,
 }: Props) {
   const isAr = locale === "ar";
   const regions = config.regions ?? [];
@@ -62,6 +63,7 @@ export default function MapCard({
       subCat={subCat}
       sourceUrl={config.sourceUrl}
       likeCount={likeCount}
+      tags={tags}
     >
       {/* Body */}
       {!isDetail && body && (

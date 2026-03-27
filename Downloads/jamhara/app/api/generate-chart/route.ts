@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { buildChartPrompt, buildChartTypeInstruction } from "@/lib/prompts";
 import { extractJSON } from "@/lib/json-utils";
 import { checkTopicDuplicate, registerTopic, getRecentTopics } from "@/lib/dedup";
+import { normalizeTags } from "@/lib/tags";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 function isAuthorized(req: NextRequest) {
@@ -94,6 +95,7 @@ export async function POST(req: NextRequest) {
     console.error("[generate-chart] JSON parse failed. Raw (first 400):", raw.slice(0, 400));
     return NextResponse.json({ error: "Failed to parse AI response", raw: raw.slice(0, 300) }, { status: 500 });
   }
+  const tags = normalizeTags(Array.isArray(parsed.tags) ? parsed.tags : []);
   const { data: post, error } = await supabase.from("posts").insert({
     title_ar: parsed.title_ar,
     title_en: parsed.title_en,
@@ -103,6 +105,7 @@ export async function POST(req: NextRequest) {
     chart_config: parsed.chart_config,
     category_id: cat.id,
     status: "published",
+    tags,
     quality_score: 85,
     like_count: 0,
     share_count: 0,

@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { buildTimelinePrompt } from "@/lib/prompts";
 import { extractJSON } from "@/lib/json-utils";
 import { checkTopicDuplicate, registerTopic, getRecentTopics } from "@/lib/dedup";
+import { normalizeTags } from "@/lib/tags";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 export const maxDuration = 60;
@@ -76,11 +77,12 @@ export async function POST(req: NextRequest) {
     if (!parsed) return NextResponse.json({ error:"JSON parse failed" }, { status:500 });
     const cfg = parsed.content_config;
     if (!cfg?.events?.length) return NextResponse.json({ error:"Invalid timeline config" }, { status:500 });
+    const tags = normalizeTags(Array.isArray(parsed.tags) ? parsed.tags : []);
     const { data:post, error:err } = await supabase.from("posts").insert({
       title_ar:strip(parsed.title_ar)||topic, title_en:strip(parsed.title_en)||topic,
       body_ar:strip(parsed.body_ar), body_en:strip(parsed.body_en),
       type:"timeline" as "timeline", status:"published", category_id:cat.id,
-      content_config:cfg, quality_score:85, reading_time:3,
+      content_config:cfg, tags, quality_score:85, reading_time:3,
       published_at:new Date().toISOString(),
     }).select().single();
     if (err) return NextResponse.json({ error:err.message }, { status:500 });

@@ -596,12 +596,23 @@ export interface MapConfig {
 }
 
 // ─── News Types ───────────────────────────────────────────────────────────────
+export interface NewsQuote {
+  text_ar: string;
+  author_ar: string;
+  role_ar?: string;
+}
+
 export interface NewsConfig {
   source_name?: string;
   source_url?: string;
   gnews_url?: string;
   gnews_published_at?: string;
   image_url?: string;
+  // Axios Smart Brevity structure
+  why_it_matters_ar?: string;   // ما سبب أهميته؟
+  key_points_ar?: string[];     // نقاط رئيسية (3-5)
+  quote?: NewsQuote;            // اقتباس بارز (اختياري)
+  whats_next_ar?: string;       // ما التالي؟ (اختياري)
 }
 
 // ─── Unified content_config (for all 10 new types) ───────────────────────────
@@ -682,6 +693,8 @@ export interface Database {
           created_at: string;
           published_at: string;
           type: "article" | "chart" | "quiz" | "comparison" | "ranking" | "numbers" | "scenarios" | "timeline" | "factcheck" | "profile" | "briefing" | "quotes" | "explainer" | "debate" | "guide" | "network" | "interview" | "map" | "news";
+          tags: string[] | null;
+          source_url: string | null;
           chart_config: ChartConfig | null;
           quiz_config: QuizConfig | null;
           comparison_config: ComparisonConfig | null;

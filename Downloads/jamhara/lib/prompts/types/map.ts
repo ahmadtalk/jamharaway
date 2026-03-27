@@ -10,6 +10,7 @@
  */
 
 import { SOURCE_INSTRUCTION } from "../shared/sources";
+import { TAGS_INSTRUCTION } from "../shared/tags";
 
 export interface MapPromptParams {
   topic: string;
@@ -25,6 +26,7 @@ export function buildMapPrompt({ topic, categoryName }: MapPromptParams): string
   "title_en": "Geographic Distribution Title",
   "body_ar": "مقدمة موجزة تشرح البيانات وأهميتها — 2-3 جمل",
   "body_en": "Brief intro explaining the data — 2-3 sentences",
+  "tags": ["وسم1", "وسم2", "..."],
   "content_config": {
     "topic_ar": "الموضوع الذي تُقارن فيه الدول",
     "topic_en": "The topic being compared across countries",
@@ -51,5 +53,5 @@ export function buildMapPrompt({ topic, categoryName }: MapPromptParams): string
 }
 
 قواعد: 6-12 دولة أو منطقة، دولة واحدة على الأقل مميزة (highlight: true)، بيانات حقيقية وحديثة، أرقام دقيقة وموثوقة، ترتيب منطقي (تنازلي أو إقليمي).
-أرجع JSON فقط.${SOURCE_INSTRUCTION}`;
+أرجع JSON فقط.${TAGS_INSTRUCTION}${SOURCE_INSTRUCTION}`;
 }

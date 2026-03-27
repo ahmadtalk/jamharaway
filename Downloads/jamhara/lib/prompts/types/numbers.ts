@@ -9,6 +9,7 @@
  */
 
 import { SOURCE_INSTRUCTION } from "../shared/sources";
+import { TAGS_INSTRUCTION } from "../shared/tags";
 
 export interface NumbersPromptParams {
   topic: string;
@@ -24,6 +25,7 @@ export function buildNumbersPrompt({ topic, categorySlug }: NumbersPromptParams)
   "title_en": "Catchy title",
   "body_ar": "سياق تحليلي 2-3 جمل نص عادي",
   "body_en": "Analytical context 2-3 sentences plain text",
+  "tags": ["وسم1", "وسم2", ...],
   "content_config": {
     "stats": [
       {
@@ -46,5 +48,6 @@ export function buildNumbersPrompt({ topic, categorySlug }: NumbersPromptParams)
 - الرقم في number يجب أن يكون بارزاً ومثيراً (قيمة + وحدة في نفس النص)
 - تنوّع الألوان في color من: #4CB36C #7B5EA7 #E05A2B #2196F3 #F59E0B #00BCD4
 - icon: emoji مناسب
-- نص بدون HTML${SOURCE_INSTRUCTION}`;
+- نص بدون HTML
+${TAGS_INSTRUCTION}${SOURCE_INSTRUCTION}`;
 }

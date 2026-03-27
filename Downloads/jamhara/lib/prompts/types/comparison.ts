@@ -11,6 +11,7 @@
 
 import type { ComparisonType } from "@/lib/supabase/types";
 import { SOURCE_INSTRUCTION } from "../shared/sources";
+import { TAGS_INSTRUCTION } from "../shared/tags";
 
 export interface ComparisonPromptParams {
   /** الموضوع الفعّال */
@@ -32,6 +33,7 @@ function prompt_bars(topic: string, cat: string): string {
   "title_en": "Title in English",
   "body_ar": "ملخص تحليلي 2-3 جمل، نص عادي",
   "body_en": "Summary 2-3 sentences, plain text",
+  "tags": ["وسم1", "وسم2", ...],
   "comparison_config": {
     "comparison_type": "bars",
     "entity_a": { "name_ar":"...", "name_en":"...", "emoji":"🔵", "color":"#7B5EA7" },
@@ -42,7 +44,8 @@ function prompt_bars(topic: string, cat: string): string {
     "source": "...", "sourceUrl": "https://رابط-حقيقي-من-نتائج-البحث"
   }
 }
-قواعد: 5-8 محاور، الأرقام 0-100 واقعية ومتنوعة، نص بدون HTML.${SOURCE_INSTRUCTION}`;
+قواعد: 5-8 محاور، الأرقام 0-100 واقعية ومتنوعة، نص بدون HTML.
+${TAGS_INSTRUCTION}${SOURCE_INSTRUCTION}`;
 }
 
 function prompt_matrix(topic: string, cat: string): string {
@@ -54,6 +57,7 @@ function prompt_matrix(topic: string, cat: string): string {
   "title_en": "Title in English",
   "body_ar": "ملخص تحليلي 2-3 جمل، نص عادي",
   "body_en": "Summary 2-3 sentences, plain text",
+  "tags": ["وسم1", "وسم2", ...],
   "comparison_config": {
     "comparison_type": "matrix",
     "entity_a": { "name_ar":"...", "name_en":"...", "emoji":"🔵", "color":"#7B5EA7" },
@@ -71,7 +75,8 @@ function prompt_matrix(topic: string, cat: string): string {
     "source": "...", "sourceUrl": "https://رابط-حقيقي-من-نتائج-البحث"
   }
 }
-قواعد: 8-14 ميزة. قيمة value_a/value_b: "yes" أو "no" أو "partial" أو نص قصير واقعي. تنوّع بين القيم ولا تجعل طرفاً يفوز في كل شيء. نص بدون HTML.${SOURCE_INSTRUCTION}`;
+قواعد: 8-14 ميزة. قيمة value_a/value_b: "yes" أو "no" أو "partial" أو نص قصير واقعي. تنوّع بين القيم ولا تجعل طرفاً يفوز في كل شيء. نص بدون HTML.
+${TAGS_INSTRUCTION}${SOURCE_INSTRUCTION}`;
 }
 
 function prompt_profile(topic: string, cat: string): string {
@@ -83,6 +88,7 @@ function prompt_profile(topic: string, cat: string): string {
   "title_en": "Title in English",
   "body_ar": "ملخص 2-3 جمل نص عادي",
   "body_en": "Summary 2-3 sentences plain text",
+  "tags": ["وسم1", "وسم2", ...],
   "comparison_config": {
     "comparison_type": "profile",
     "entity_a": {
@@ -100,7 +106,8 @@ function prompt_profile(topic: string, cat: string): string {
     "source": "...", "sourceUrl": "https://رابط-حقيقي-من-نتائج-البحث"
   }
 }
-قواعد: 4-6 إحصاءات، 2-4 وسوم، إنجاز بارز واحد. نص بدون HTML.${SOURCE_INSTRUCTION}`;
+قواعد: 4-6 إحصاءات، 2-4 وسوم، إنجاز بارز واحد. نص بدون HTML.
+${TAGS_INSTRUCTION}${SOURCE_INSTRUCTION}`;
 }
 
 function prompt_timeline_duel(topic: string, cat: string): string {
@@ -112,6 +119,7 @@ function prompt_timeline_duel(topic: string, cat: string): string {
   "title_en": "Title in English",
   "body_ar": "ملخص 2-3 جمل نص عادي",
   "body_en": "Summary 2-3 sentences plain text",
+  "tags": ["وسم1", "وسم2", ...],
   "comparison_config": {
     "comparison_type": "timeline_duel",
     "entity_a": { "name_ar":"...", "name_en":"...", "emoji":"🔵", "color":"#7B5EA7" },
@@ -124,7 +132,8 @@ function prompt_timeline_duel(topic: string, cat: string): string {
     "source": "...", "sourceUrl": "https://رابط-حقيقي-من-نتائج-البحث"
   }
 }
-قواعد: 8-12 نقطة زمنية واقعية ودقيقة، القيم أرقام حقيقية. نص بدون HTML.${SOURCE_INSTRUCTION}`;
+قواعد: 8-12 نقطة زمنية واقعية ودقيقة، القيم أرقام حقيقية. نص بدون HTML.
+${TAGS_INSTRUCTION}${SOURCE_INSTRUCTION}`;
 }
 
 function prompt_stance(topic: string, cat: string): string {
@@ -136,6 +145,7 @@ function prompt_stance(topic: string, cat: string): string {
   "title_en": "Title in English",
   "body_ar": "ملخص 2-3 جمل نص عادي",
   "body_en": "Summary 2-3 sentences plain text",
+  "tags": ["وسم1", "وسم2", ...],
   "comparison_config": {
     "comparison_type": "stance",
     "entity_a": { "name_ar":"...", "name_en":"...", "emoji":"🔵", "color":"#7B5EA7" },
@@ -153,7 +163,8 @@ function prompt_stance(topic: string, cat: string): string {
     "source": "...", "sourceUrl": "https://رابط-حقيقي-من-نتائج-البحث"
   }
 }
-قواعد: 4-7 محاور، المواقف متباينة وواقعية وموضوعية، نص بدون HTML.${SOURCE_INSTRUCTION}`;
+قواعد: 4-7 محاور، المواقف متباينة وواقعية وموضوعية، نص بدون HTML.
+${TAGS_INSTRUCTION}${SOURCE_INSTRUCTION}`;
 }
 
 function prompt_spectrum(topic: string, cat: string): string {
@@ -165,6 +176,7 @@ function prompt_spectrum(topic: string, cat: string): string {
   "title_en": "Title in English",
   "body_ar": "ملخص 2-3 جمل نص عادي",
   "body_en": "Summary 2-3 sentences plain text",
+  "tags": ["وسم1", "وسم2", ...],
   "comparison_config": {
     "comparison_type": "spectrum",
     "entity_a": { "name_ar":"...", "name_en":"...", "emoji":"🔵", "color":"#7B5EA7" },
@@ -186,7 +198,8 @@ function prompt_spectrum(topic: string, cat: string): string {
     "source": "...", "sourceUrl": "https://رابط-حقيقي-من-نتائج-البحث"
   }
 }
-قواعد: 4-7 محاور طيفية، position_a وposition_b بين 0-100 وواقعيتان، التسميات قصيرة (كلمة أو كلمتان). نص بدون HTML.${SOURCE_INSTRUCTION}`;
+قواعد: 4-7 محاور طيفية، position_a وposition_b بين 0-100 وواقعيتان، التسميات قصيرة (كلمة أو كلمتان). نص بدون HTML.
+${TAGS_INSTRUCTION}${SOURCE_INSTRUCTION}`;
 }
 
 // ── Map (لتبسيط lookup في الـ route) ─────────────────────────────────────────

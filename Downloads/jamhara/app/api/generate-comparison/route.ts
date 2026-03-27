@@ -6,6 +6,7 @@ import type { ComparisonType } from "@/lib/supabase/types";
 import { buildComparisonPrompt } from "@/lib/prompts";
 import { extractJSON } from "@/lib/json-utils";
 import { checkTopicDuplicate, registerTopic, getRecentTopics } from "@/lib/dedup";
+import { normalizeTags } from "@/lib/tags";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 export const maxDuration = 60;
@@ -111,6 +112,7 @@ export async function POST(req: NextRequest) {
       console.error("[generate-comparison] Validation failed:", JSON.stringify(cfg).slice(0,300));
       return NextResponse.json({ error:`Invalid ${comparison_type} config structure` }, { status:500 });
     }
+    const tags = normalizeTags(Array.isArray(parsed.tags) ? parsed.tags : []);
     const { data: post, error: insertError } = await supabase
       .from("posts")
       .insert({
@@ -122,6 +124,7 @@ export async function POST(req: NextRequest) {
         status:             "published",
         category_id:        category.id,
         comparison_config:  cfg as unknown as null,
+        tags,
         quality_score:      85,
         reading_time:       2,
         published_at:       new Date().toISOString(),

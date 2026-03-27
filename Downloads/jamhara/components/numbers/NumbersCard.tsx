@@ -21,6 +21,7 @@ interface Props {
   // New unified props
   parentCat?: { name_ar: string; name_en: string; slug: string; color?: string };
   subCat?: { name_ar: string; name_en: string; slug: string };
+  tags?: string[];
 }
 
 const PALETTE = ["#4CB36C", "#7B5EA7", "#E05A2B", "#2196F3", "#F59E0B", "#00BCD4"];
@@ -31,7 +32,7 @@ export default function NumbersCard({
   id, title, body, config,
   categoryName, categorySlug, categoryColor,
   likeCount, locale, timeAgoStr, isDetail,
-  parentCat, subCat,
+  parentCat, subCat, tags,
 }: Props) {
   const isAr = locale === "ar";
   const [mounted, setMounted] = useState(false);
@@ -64,6 +65,7 @@ export default function NumbersCard({
       subCat={subCat}
       sourceUrl={sourceUrl}
       likeCount={likeCount}
+      tags={tags}
     >
       {/* Body — moved to top (feed only) */}
       {!isDetail && body && body.replace(/<[^>]*>/g, "").trim() && (

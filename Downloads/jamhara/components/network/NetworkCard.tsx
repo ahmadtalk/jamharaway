@@ -19,6 +19,7 @@ interface Props {
   isDetail?: boolean;
   parentCat?: { name_ar: string; name_en: string; slug: string; color?: string };
   subCat?: { name_ar: string; name_en: string; slug: string };
+  tags?: string[];
 }
 
 const RELATION_STYLE: Record<NetworkRelationType | "other", { color: string; bg: string }> = {
@@ -40,7 +41,7 @@ export default function NetworkCard({
   id, title, body, config,
   categoryName, categorySlug, categoryColor,
   likeCount, locale, timeAgoStr, isDetail = false,
-  parentCat, subCat,
+  parentCat, subCat, tags,
 }: Props) {
   const isAr = locale === "ar";
   const nodes = config.nodes ?? [];
@@ -65,6 +66,7 @@ export default function NetworkCard({
       subCat={subCat}
       sourceUrl={config.sourceUrl}
       likeCount={likeCount}
+      tags={tags}
     >
       {/* Body */}
       {!isDetail && body && (

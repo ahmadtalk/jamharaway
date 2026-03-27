@@ -20,13 +20,14 @@ interface Props {
   // New unified props (optional — passed from PostCard/detail page)
   parentCat?: { name_ar: string; name_en: string; slug: string; color?: string };
   subCat?: { name_ar: string; name_en: string; slug: string };
+  tags?: string[];
 }
 
 export default function ChartCard({
   id, title, config,
   categoryName, categorySlug, categoryColor,
   likeCount, locale, timeAgoStr, isDetail = false, body,
-  parentCat, subCat,
+  parentCat, subCat, tags,
 }: Props) {
   const isAr = locale === "ar";
   const chartHeight = isDetail ? 380 : 260;
@@ -50,6 +51,7 @@ export default function ChartCard({
       subCat={subCat}
       sourceUrl={sourceUrl}
       likeCount={likeCount}
+      tags={tags}
     >
       <div className="chart-wrap">
         <ChartRenderer config={config} height={chartHeight} />

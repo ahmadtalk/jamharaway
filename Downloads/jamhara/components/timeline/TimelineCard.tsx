@@ -22,6 +22,7 @@ interface Props {
   // New unified props
   parentCat?: { name_ar: string; name_en: string; slug: string; color?: string };
   subCat?: { name_ar: string; name_en: string; slug: string };
+  tags?: string[];
 }
 
 const EVENT_COLOR: Record<TimelineEventType, string> = {
@@ -38,7 +39,7 @@ export default function TimelineCard({
   id, title, body, config,
   categoryName, categorySlug, categoryColor = "#0D9488",
   likeCount, locale, timeAgoStr, isDetail = false,
-  parentCat, subCat,
+  parentCat, subCat, tags,
 }: Props) {
   const isAr = locale === "ar";
   const [visible, setVisible] = useState<boolean[]>([]);
@@ -83,6 +84,7 @@ export default function TimelineCard({
       subCat={subCat}
       sourceUrl={sourceUrl}
       likeCount={likeCount}
+      tags={tags}
     >
       {/* Body — moved to top */}
       {!isDetail && body && body.replace(/<[^>]*>/g, "").trim() && (
