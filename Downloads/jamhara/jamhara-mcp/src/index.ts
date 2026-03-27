@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import express, { Request, Response } from "express";
@@ -651,6 +652,33 @@ function createJamharaServer() {
 const app = express();
 app.use(express.json());
 
+// SSE transport sessions (for Claude Desktop compatibility)
+const sseTransports: Record<string, SSEServerTransport> = {};
+
+// SSE endpoint — Claude Desktop connects here
+app.get("/sse", async (req: Request, res: Response) => {
+  const transport = new SSEServerTransport("/messages", res);
+  const server = createJamharaServer();
+  await server.connect(transport);
+  sseTransports[transport.sessionId] = transport;
+  res.on("close", () => {
+    delete sseTransports[transport.sessionId];
+    server.close();
+  });
+});
+
+// SSE messages endpoint
+app.post("/messages", async (req: Request, res: Response) => {
+  const sessionId = req.query.sessionId as string;
+  const transport = sseTransports[sessionId];
+  if (transport) {
+    await transport.handlePostMessage(req, res);
+  } else {
+    res.status(400).json({ error: "Session not found" });
+  }
+});
+
+// StreamableHTTP endpoint (Claude Code / API clients)
 app.post("/mcp", async (req: Request, res: Response) => {
   const server = createJamharaServer();
   const transport = new StreamableHTTPServerTransport({
@@ -668,7 +696,7 @@ app.get("/health", (_req: Request, res: Response) => {
     version: "1.0.0",
     description: "منصة جمهرة — مصدر معرفي عربي بالذكاء الاصطناعي",
     tools: ["search_posts", "get_post", "get_latest_posts", "list_categories", "get_statistics"],
-    endpoint: "/mcp",
+    endpoints: { sse: "/sse", mcp: "/mcp" },
   });
 });
 
@@ -676,15 +704,15 @@ app.get("/", (_req: Request, res: Response) => {
   res.json({
     name: "Jamhara MCP Server",
     description: "Arabic knowledge platform — 19 content types, 43 visual templates",
+    sse_endpoint: "/sse",
     mcp_endpoint: "/mcp",
     health: "/health",
-    docs: "https://jamhara.com",
   });
 });
 
 const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => {
   console.log(`🚀 Jamhara MCP Server → port ${PORT}`);
-  console.log(`   Health: http://localhost:${PORT}/health`);
+  console.log(`   SSE:    http://localhost:${PORT}/sse`);
   console.log(`   MCP:    http://localhost:${PORT}/mcp`);
 });
