@@ -1,7 +1,8 @@
 "use client";
 
-import type { ComparisonConfig } from "@/lib/supabase/types";
+import type { ComparisonConfig, PostWithRelations } from "@/lib/supabase/types";
 import JCardShell from "@/components/shared/JCardShell";
+import ShareButton from "@/components/shared/ShareButton";
 import { postUrl } from "@/lib/utils";
 import Link from "next/link";
 
@@ -31,6 +32,7 @@ interface Props {
   parentCat?: { name_ar: string; name_en: string; slug: string; color?: string };
   subCat?: { name_ar: string; name_en: string; slug: string };
   tags?: string[];
+  post?: PostWithRelations;
 }
 
 // ── Type label ────────────────────────────────────────────────────────────────
@@ -65,7 +67,7 @@ export default function ComparisonCard({
   id, title, body, config,
   categoryName, categorySlug, categoryColor,
   likeCount, locale, timeAgoStr, isDetail,
-  parentCat, subCat, tags,
+  parentCat, subCat, tags, post,
 }: Props) {
   const isAr = locale === "ar";
 
@@ -127,6 +129,13 @@ export default function ComparisonCard({
       likeCount={likeCount}
       tags={tags}
     >
+      {/* زر المشاركة — يظهر فقط في صفحة التفاصيل */}
+      {isDetail && post && (
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>
+          <ShareButton post={post} locale={locale} isAr={locale === "ar"} />
+        </div>
+      )}
+
       {/* Body — moved to top (feed only) */}
       {!isDetail && body && body.replace(/<[^>]*>/g, "").trim() && (
         <p style={{ fontSize: ".82rem", color: "#5A5F7A", lineHeight: 1.7, marginBottom: 12, marginTop: 0 }}>

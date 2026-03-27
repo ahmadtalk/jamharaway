@@ -2,9 +2,10 @@
 
 import { useState, useCallback, useRef } from "react";
 import Link from "next/link";
-import type { QuizConfig, QuizType, MCQQuestion, LegacyMCQQuestion, TrueFalseQuestion, TimelineQuestion, MatchingQuestion, GuessWhoQuestion, SpeedQuestion } from "@/lib/supabase/types";
+import type { QuizConfig, QuizType, MCQQuestion, LegacyMCQQuestion, TrueFalseQuestion, TimelineQuestion, MatchingQuestion, GuessWhoQuestion, SpeedQuestion, PostWithRelations } from "@/lib/supabase/types";
 import { postUrl } from "@/lib/utils";
 import JCardShell from "@/components/shared/JCardShell";
+import ShareButton from "@/components/shared/ShareButton";
 import MCQRenderer from "./renderers/MCQRenderer";
 import TrueFalseRenderer from "./renderers/TrueFalseRenderer";
 import TimelineRenderer from "./renderers/TimelineRenderer";
@@ -28,6 +29,7 @@ interface Props {
   parentCat?: { name_ar: string; name_en: string; slug: string; color?: string };
   subCat?: { name_ar: string; name_en: string; slug: string };
   tags?: string[];
+  post?: PostWithRelations;
 }
 
 // Quiz type metadata
@@ -44,7 +46,7 @@ export default function QuizCard({
   id, title, config,
   categoryName, categorySlug, categoryColor = "#4CB36C",
   likeCount, locale, timeAgoStr, isDetail = false,
-  parentCat, subCat, tags,
+  parentCat, subCat, tags, post,
 }: Props) {
   const questions = config.questions ?? [];
   const quizType: QuizType = config.quiz_type ?? "mcq";
@@ -202,6 +204,13 @@ export default function QuizCard({
       likeCount={likeCount}
       tags={tags}
     >
+      {/* زر المشاركة — يظهر فقط في صفحة التفاصيل */}
+      {isDetail && post && (
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>
+          <ShareButton post={post} locale={locale} isAr={locale === "ar"} />
+        </div>
+      )}
+
       {/* Feed: show intro only */}
       {!isDetail ? (
         <div className="jcard-quiz-intro">

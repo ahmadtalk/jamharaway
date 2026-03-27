@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import type { ProfilePostConfig, ProfileSubjectType } from "@/lib/supabase/types";
+import type { ProfilePostConfig, ProfileSubjectType, PostWithRelations } from "@/lib/supabase/types";
 import JCardShell from "@/components/shared/JCardShell";
+import ShareButton from "@/components/shared/ShareButton";
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 interface Props {
@@ -22,6 +23,7 @@ interface Props {
   parentCat?: { name_ar: string; name_en: string; slug: string; color?: string };
   subCat?: { name_ar: string; name_en: string; slug: string };
   tags?: string[];
+  post?: PostWithRelations;
 }
 
 // ── Subject type labels ───────────────────────────────────────────────────────
@@ -85,7 +87,7 @@ export default function ProfileCard({
   id, title, body, config,
   categoryName, categorySlug, categoryColor = "#0891B2",
   likeCount, locale, timeAgoStr, isDetail = false,
-  parentCat, subCat, tags,
+  parentCat, subCat, tags, post,
 }: Props) {
   const isAr = locale === "ar";
   const color = config.avatar_color || "#373C55";
@@ -125,6 +127,13 @@ export default function ProfileCard({
       likeCount={likeCount}
       tags={tags}
     >
+
+      {/* زر المشاركة — يظهر فقط في صفحة التفاصيل */}
+      {isDetail && post && (
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>
+          <ShareButton post={post} locale={locale} isAr={locale === "ar"} />
+        </div>
+      )}
 
       {/* ── Profile Header ─────────────────────────────────────────── */}
       <div style={{

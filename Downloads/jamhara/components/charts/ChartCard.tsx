@@ -1,7 +1,8 @@
 "use client";
 
-import type { ChartConfig } from "@/lib/supabase/types";
+import type { ChartConfig, PostWithRelations } from "@/lib/supabase/types";
 import JCardShell from "@/components/shared/JCardShell";
+import ShareButton from "@/components/shared/ShareButton";
 import ChartRenderer from "./ChartRenderer";
 
 interface Props {
@@ -21,13 +22,14 @@ interface Props {
   parentCat?: { name_ar: string; name_en: string; slug: string; color?: string };
   subCat?: { name_ar: string; name_en: string; slug: string };
   tags?: string[];
+  post?: PostWithRelations;
 }
 
 export default function ChartCard({
   id, title, config,
   categoryName, categorySlug, categoryColor,
   likeCount, locale, timeAgoStr, isDetail = false, body,
-  parentCat, subCat, tags,
+  parentCat, subCat, tags, post,
 }: Props) {
   const isAr = locale === "ar";
   const chartHeight = isDetail ? 380 : 260;
@@ -53,6 +55,13 @@ export default function ChartCard({
       likeCount={likeCount}
       tags={tags}
     >
+      {/* زر المشاركة — يظهر فقط في صفحة التفاصيل */}
+      {isDetail && post && (
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>
+          <ShareButton post={post} locale={locale} isAr={locale === "ar"} />
+        </div>
+      )}
+
       <div className="chart-wrap">
         <ChartRenderer config={config} height={chartHeight} />
       </div>

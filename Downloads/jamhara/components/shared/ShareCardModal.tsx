@@ -3,14 +3,13 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { toPng } from "html-to-image";
 import ShareCard, { CARD_DIMS, type ShareCardSize } from "./ShareCard";
-import type { NewsConfig } from "@/lib/supabase/types";
+import { buildShareCardData } from "@/lib/share-card-data";
+import type { PostWithRelations } from "@/lib/supabase/types";
 
 interface Props {
-  title:    string;
-  lede:     string;
-  cfg:      NewsConfig;
-  imageUrl?: string | null;
-  onClose:  () => void;
+  post:    PostWithRelations;
+  locale:  "ar" | "en";
+  onClose: () => void;
 }
 
 const SIZES: { id: ShareCardSize; label: string; icon: string; dim: string }[] = [
@@ -19,7 +18,7 @@ const SIZES: { id: ShareCardSize; label: string; icon: string; dim: string }[] =
   { id: "story",     label: "ستوري",  icon: "📱", dim: "1080×1920" },
 ];
 
-const PREVIEW_W = 380; // عرض المعاينة بالـ px
+const PREVIEW_W = 380;
 
 /** يُحوّل رابطاً لـ base64 data URL (يحل مشاكل CORS وRelative paths مع html-to-image) */
 async function toDataUrl(src: string): Promise<string | null> {
@@ -37,19 +36,24 @@ async function toDataUrl(src: string): Promise<string | null> {
   } catch { return null; }
 }
 
-export default function ShareCardModal({ title, lede, cfg, imageUrl, onClose }: Props) {
+export default function ShareCardModal({ post, locale, onClose }: Props) {
+  const shareCardData = buildShareCardData(post, locale);
+  const imageUrl = shareCardData.imageUrl ?? null;
+
   const [size, setSize]       = useState<ShareCardSize>("square");
   const [loading, setLoading] = useState(false);
   const [imgSrc, setImgSrc]   = useState<string | null>(null);
   const [logoSrc, setLogoSrc] = useState<string | null>(null);
   const cardRef               = useRef<HTMLDivElement>(null);
 
+  // locale مُمرَّر للبطاقة لتحديد اتجاه الهيدر
+
   // تحميل الشعار كـ base64 عند فتح المودال
   useEffect(() => {
     toDataUrl("/logo.png").then(setLogoSrc);
   }, []);
 
-  // تحميل صورة الخبر عبر الـ proxy لضمان عدم مشاكل CORS
+  // تحميل صورة المنشور عبر الـ proxy لضمان عدم مشاكل CORS
   useEffect(() => {
     if (!imageUrl) { setImgSrc(null); return; }
     const proxy = `/api/image-proxy?url=${encodeURIComponent(imageUrl)}`;
@@ -64,8 +68,6 @@ export default function ShareCardModal({ title, lede, cfg, imageUrl, onClose }: 
   const previewH = Math.round(cardH * scale);
 
   // ── بناء fontEmbedCSS يدوياً ────────────────────────────────────────────────
-  // html-to-image يتعطل عند قراءة @font-face rules تلقائياً في Firefox (bug).
-  // الحل: نستخرج مسارات الخطوط بأمان، نجلبها كـ base64، ونمررها عبر `fontEmbedCSS`.
   async function buildFontEmbedCSS(): Promise<string> {
     const TARGET_FAMILIES  = ["Cairo", "IBM Plex Sans Arabic", "Rubik"];
     const NEEDED_WEIGHTS   = new Set(["300", "400", "500", "600", "700", "800", "900"]);
@@ -93,7 +95,6 @@ export default function ShareCardModal({ title, lede, cfg, imageUrl, onClose }: 
           const src    = st.getPropertyValue("src") ?? "";
           const fStyle = (st.getPropertyValue("font-style") ?? "normal").trim();
 
-          // ملفات next/font المحلية فقط
           const match = src.match(/url\(["']?((?:\/_next\/static\/media\/|\/)[^"')]*\.woff2[^"')']*)["']?\)/);
           const url   = match?.[1]?.trim();
           if (!url) continue;
@@ -102,12 +103,10 @@ export default function ShareCardModal({ title, lede, cfg, imageUrl, onClose }: 
           if (seen.has(key)) continue;
           seen.add(key);
 
-          // جلب الملف وتحويله لـ base64
           const res = await fetch(url);
           if (!res.ok) continue;
           const buf    = await res.arrayBuffer();
           const bytes  = new Uint8Array(buf);
-          // btoa بشكل آمن لأحجام كبيرة
           let bin = "";
           const chunkSize = 8192;
           for (let i = 0; i < bytes.length; i += chunkSize) {
@@ -130,12 +129,9 @@ export default function ShareCardModal({ title, lede, cfg, imageUrl, onClose }: 
     setLoading(true);
     try {
       const filename = `jamhara-${size}-${Date.now()}.png`;
-
-      // نبني CSS الخطوط يدوياً — ثم نمرره مباشرة بدل أن يكتشفه html-to-image
       const fontEmbedCSS = await buildFontEmbedCSS();
-
       const png = await toPng(cardRef.current, {
-        pixelRatio: 2,                                 // دقة مضاعفة — 2160×2160 للمربع
+        pixelRatio: 2,
         cacheBust: true,
         skipFonts: true,
         fontEmbedCSS: fontEmbedCSS || undefined,
@@ -218,28 +214,26 @@ export default function ShareCardModal({ title, lede, cfg, imageUrl, onClose }: 
           ))}
         </div>
 
-        {/* Preview — card at actual pixel size, scaled down via CSS transform */}
+        {/* Preview */}
         <div style={{
           width: PREVIEW_W, height: previewH,
           overflow: "hidden", borderRadius: 10,
           boxShadow: "0 2px 16px rgba(0,0,0,.12)",
           flexShrink: 0,
-          // للستوري: يمكن التمرير داخل المعاينة
           overflowY: size === "story" ? "auto" : "hidden",
         }}>
           <div style={{
             transform: `scale(${scale})`,
-            transformOrigin: "top right",
+            transformOrigin: locale === "ar" ? "top right" : "top left",
             width: cardW, height: cardH,
           }}>
             <ShareCard
               ref={cardRef}
-              title={title}
-              lede={lede}
-              cfg={cfg}
+              data={shareCardData}
               size={size}
               imgSrc={imgSrc}
               logoSrc={logoSrc}
+              locale={locale}
             />
           </div>
         </div>

@@ -1,13 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import JCardShell from "@/components/shared/JCardShell";
+import ShareButton from "@/components/shared/ShareButton";
 import type { PostWithRelations, NewsConfig } from "@/lib/supabase/types";
-
-// dynamic import — html-to-image لا يعمل في SSR
-const ShareCardModal = dynamic(() => import("./ShareCardModal"), { ssr: false });
 
 interface Props {
   post: PostWithRelations;
@@ -24,8 +21,7 @@ export default function NewsCard({ post, locale, timeAgoStr, isDetail = false, i
   const lede  = isAr ? post.body_ar  : (post.body_en  || post.body_ar);
   const cfg   = (post.content_config as NewsConfig | null) ?? {};
 
-  const [imgErr, setImgErr]       = useState(false);
-  const [shareOpen, setShareOpen] = useState(false);
+  const [imgErr, setImgErr] = useState(false);
   const hasImage = !!post.image_url && !imgErr;
 
   const sourceName = cfg.source_name ?? "";
@@ -45,7 +41,6 @@ export default function NewsCard({ post, locale, timeAgoStr, isDetail = false, i
 
   // في feed: نعرض الـ lede فقط. في صفحة التفاصيل: نعرض الهيكل الكامل
   return (
-    <>
     <JCardShell
       postId={post.id}
       postType="news"
@@ -93,24 +88,7 @@ export default function NewsCard({ post, locale, timeAgoStr, isDetail = false, i
           )}
         </div>
         {/* زر مشاركة كصورة — يظهر فقط في صفحة التفاصيل */}
-        {isDetail && (
-          <button
-            onClick={() => setShareOpen(true)}
-            title={isAr ? "مشاركة كصورة" : "Share as image"}
-            style={{
-              display: "flex", alignItems: "center", gap: 5,
-              background: "var(--slate3)", border: "none",
-              borderRadius: 8, padding: "5px 11px",
-              cursor: "pointer", fontSize: ".75rem", fontWeight: 700,
-              color: "var(--muted)", transition: "background .15s",
-            }}
-            onMouseEnter={e => (e.currentTarget.style.background = "var(--green-light)")}
-            onMouseLeave={e => (e.currentTarget.style.background = "var(--slate3)")}
-          >
-            <span>📸</span>
-            <span>{isAr ? "مشاركة" : "Share"}</span>
-          </button>
-        )}
+        {isDetail && <ShareButton post={post} locale={locale} isAr={isAr} />}
       </div>
 
       {/* ── الـ Lede ── */}
@@ -252,17 +230,5 @@ export default function NewsCard({ post, locale, timeAgoStr, isDetail = false, i
         </ul>
       )}
     </JCardShell>
-
-    {/* ── مودال المشاركة كصورة ── */}
-    {shareOpen && (
-      <ShareCardModal
-        title={title}
-        lede={lede ?? ""}
-        cfg={cfg}
-        imageUrl={post.image_url}
-        onClose={() => setShareOpen(false)}
-      />
-    )}
-    </>
   );
 }

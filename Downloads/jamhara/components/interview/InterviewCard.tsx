@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import type { InterviewConfig } from "@/lib/supabase/types";
+import type { InterviewConfig, PostWithRelations } from "@/lib/supabase/types";
 import JCardShell from "@/components/shared/JCardShell";
+import ShareButton from "@/components/shared/ShareButton";
 
 interface Props {
   id: string;
@@ -20,6 +21,7 @@ interface Props {
   parentCat?: { name_ar: string; name_en: string; slug: string; color?: string };
   subCat?: { name_ar: string; name_en: string; slug: string };
   tags?: string[];
+  post?: PostWithRelations;
 }
 
 const ACCENT = "#1D4ED8";
@@ -29,7 +31,7 @@ export default function InterviewCard({
   id, title, body, config,
   categoryName, categorySlug, categoryColor,
   likeCount, locale, timeAgoStr, isDetail = false,
-  parentCat, subCat, tags,
+  parentCat, subCat, tags, post,
 }: Props) {
   const isAr = locale === "ar";
   const qa = config.qa ?? [];
@@ -57,6 +59,13 @@ export default function InterviewCard({
       likeCount={likeCount}
       tags={tags}
     >
+      {/* زر المشاركة — يظهر فقط في صفحة التفاصيل */}
+      {isDetail && post && (
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>
+          <ShareButton post={post} locale={locale} isAr={locale === "ar"} />
+        </div>
+      )}
+
       {/* Body */}
       {!isDetail && body && (
         <p style={{ fontSize: ".82rem", color: "#5A5F7A", lineHeight: 1.7, marginBottom: 12, marginTop: 0 }}>

@@ -1139,6 +1139,69 @@ id, topic_normalized, topic_original, post_type, category_slug, post_id, generat
 - Dedup: بـ `source_url` column في DB (لا trigram)
 - **⚠️ يجب ضبط cron-job.org لاستدعاء `/api/cron/fetch-news` كل 15 دقيقة**
 
+### جلسة مارس 2026 — المجموعة الثانية عشرة (بطاقة مشاركة مخصصة للبروفايل والأخبار)
+
+**ProfileShareCard — بطاقة بروفايل غنية:**
+- [x] `components/shared/ProfileShareCard.tsx` — مكوّن جديد مخصص لنوع profile
+- [x] 3 أحجام: مربع (هيرو متدرج + chips + إحصاءات + خط زمن) / أفقي (لوحة يسرى 400px + grid يميني) / ستوري (space-between 3 أقسام)
+- [x] هيدر: سلوغن "قيمة المرء ما يعرفه" italic بدل شارة النوع + شعار جمهرة
+- [x] فوتر: "البروفايل كاملاً في موقع جمهرة" + `jamhara.com` بالأخضر
+- [x] `ProfileShareData` interface في `lib/share-card-data.ts` + تعبئة كاملة من `ProfilePostConfig`
+- [x] `ShareCard.tsx` — يُفوِّض لـ `ProfileShareCard` تلقائياً عند `data.profileData`
+- [x] إصلاح قطع العنوان: حذف `webkit-line-clamp` والاستعاضة بـ `maxHeight + overflow:hidden`
+- [x] إصلاح Story layout: `justifyContent: space-between` لتوزيع المحتوى على 1920px كاملاً
+
+**NewsShareCard — بطاقة خبر مخصصة:**
+- [x] `components/shared/NewsShareCard.tsx` — مكوّن جديد مخصص لنوع news
+- [x] هيدر/فوتر بنفس نمط ProfileShareCard (سلوغن + شعار + "الخبر كاملاً في موقع جمهرة")
+- [x] مربع: صورة كاملة العرض + عنوان + لده + نقاط مرقمة + "ما سبب أهميته؟"
+- [x] أفقي: صورة يسرى + عنوان + لده + نقاط
+- [x] ستوري: صورة + كل التفاصيل (نقاط + أهمية + اقتباس + ما التالي؟)
+- [x] إزالة شارة المصدر (SourceBadge) من جميع أحجام البطاقة
+- [x] إصلاح قطع العنوان: `Title` بلا `lines` prop — النص يظهر كاملاً
+- [x] `newsData?: NewsShareData` في `ShareCardData` + تعبئة في `buildShareCardData`
+- [x] حذف `components/news/ShareCard.tsx` و`components/news/ShareCardModal.tsx` (كود ميت)
+
+**إصلاحات عامة:**
+- [x] جميع 19 card component تمرر `post={post}` لـ `ShareButton` في `isDetail` mode
+- [x] `ShareButton` → `ShareCardModal` → `buildShareCardData(post)` → يُفوِّض للبطاقة المناسبة
+
+---
+
+### جلسة مارس 2026 — المجموعة الحادية عشرة (تعميم بطاقة المشاركة على 19 نوعاً)
+
+**بطاقة المشاركة الموحدة — 19 نوعاً:**
+- [x] `lib/share-card-data.ts` — `ShareCardData` interface + `TYPE_META` لـ 19 نوع + `buildShareCardData()` تُحوّل أي `PostWithRelations` لبيانات بطاقة
+- [x] `components/shared/ShareCard.tsx` — مكوّن موحّد يستخدم `ShareCardData` (بدل props خاصة بالأخبار)، يعرض `typeEmoji + typeLabel` badge بدل "خبر" فقط
+- [x] `components/shared/ShareCardModal.tsx` — يستدعي `buildShareCardData(post)` تلقائياً — يعمل مع كل الأنواع
+- [x] `components/shared/ShareButton.tsx` — يقبل `PostWithRelations` — نفس الزر لكل الأنواع
+- [x] جميع 19 بطاقة تستورد `ShareButton` من `@/components/shared/ShareButton` وتمرر `post` في `isDetail` mode
+- [x] صفحة التفاصيل `app/[locale]/p/[id]/page.tsx` — تمرر `post={p}` لجميع البطاقات
+- [x] حذف `components/news/ShareCard.tsx` و `components/news/ShareCardModal.tsx` (كود ميت)
+
+**بيانات كل نوع في `buildShareCardData()`:**
+- article: lede (أول 220 حرف)
+- news: lede + key_points_ar (3 نقاط)
+- ranking: metric_ar + أفضل 5 عناصر (رقم + اسم + قيمة)
+- numbers: أبرز 5 إحصاءات (أيقونة + رقم + تسمية)
+- scenarios: question_ar + سيناريوهات مع ألوان التفاؤل
+- timeline: أبرز 5 أحداث (emoji + سنة + عنوان)
+- factcheck: أبرز 4 ادعاءات مع verdict emoji
+- profile: tagline + حقائق سريعة + صورة البروفايل
+- briefing: bottom_line + 4 نقاط رئيسية
+- quotes: topic_ar + 3 اقتباسات (نص + صاحب)
+- explainer: intro + 4 أسئلة
+- debate: السؤال + موقف A + موقف B + الحكم
+- guide: هدف + 4 خطوات (أيقونة + رقم + عنوان)
+- network: المركز + 4 عقد (علاقة)
+- interview: اسم الضيف + 3 أسئلة
+- map: insight + 5 مناطق (علم + قيمة)
+- chart: body + أسماء السلاسل
+- quiz: 3 أسئلة
+- comparison: كيان A مقابل B + المحاور
+
+---
+
 ### جلسة مارس 2026 — المجموعة العاشرة (نظام الوسوم SEO + أسلوب Axios للأخبار + بطاقة المشاركة)
 
 **نظام الوسوم (SEO Tags) — 19 نوعاً:**
@@ -1180,7 +1243,6 @@ id, topic_normalized, topic_original, post_type, category_slug, post_id, generat
 - `pixelRatio: 2` = 4× البكسل الكلية = جودة مثالية للنشر الاجتماعي
 
 ### قيد الانتظار (مقترحات للمستقبل)
-- [ ] **تعميم بطاقة المشاركة على باقي 18 نوع** — الخطوة التالية المحددة
 - [ ] إعداد cron-job.org لـ /api/cron/fetch-news كل 15 دقيقة
 - [ ] إشعارات بريد عند فشل جدولة (Resend/SendGrid)
 - [ ] تحسين صفحة المنشور — تصميم أغنى + منشورات مقترحة ذكية
@@ -1288,6 +1350,7 @@ git reset --hard ae79f0e
 | `76b219d` | مارس 2026 | **المجموعة الثامنة** — dedup كامل + محرر البروفايل + برومبت v2.1 |
 | `a193e3c` | مارس 2026 | **المجموعة التاسعة** — ميزة الأخبار الكاملة (GNews + NewsCard + /news page) |
 | `a4ebda5` | مارس 2026 | **المجموعة العاشرة** — SEO Tags (19 نوع) + Axios Smart Brevity + Share Card للأخبار |
+| `HEAD`    | مارس 2026 | **المجموعة الثانية عشرة** — ProfileShareCard + NewsShareCard مخصصتان + إصلاح العنوان |
 
 ### محتوى `ae79f0e`
 - 18 نوع محتوى، 43 قالب، جميع الـ routes والمكونات
@@ -1307,4 +1370,4 @@ git reset --hard ae79f0e
 
 ---
 
-*آخر تحديث: مارس 2026 — المجموعة العاشرة: SEO Tags (19 نوع) + Axios Smart Brevity + Share Card للأخبار (3 قياسات، 2160px، خطوط مُضمَّنة)*
+*آخر تحديث: مارس 2026 — المجموعة الثانية عشرة: ProfileShareCard + NewsShareCard مخصصتان مع هيدر/فوتر موحّد (سلوغن + شعار + "كاملاً في موقع جمهرة") + إصلاح قطع العنوان*

@@ -132,6 +132,7 @@ export default async function PostPage({ params }: Props) {
               parentCat={parentCatProp}
               subCat={subCatProp}
               tags={p.tags ?? []}
+              post={p}
             />
             {relatedQuiz && relatedQuiz.length > 0 && (
               <div style={{ marginTop: 16 }}>
@@ -186,6 +187,7 @@ export default async function PostPage({ params }: Props) {
               parentCat={parentCatProp}
               subCat={subCatProp}
               tags={p.tags ?? []}
+              post={p}
             />
             {relatedComp && relatedComp.length > 0 && (
               <div style={{ marginTop: 16 }}>
@@ -249,6 +251,7 @@ export default async function PostPage({ params }: Props) {
       parentCat: parentCatProp,
       subCat: subCatProp,
       tags: p.tags ?? [],
+      post: p,
     };
 
     const CardComponent =
@@ -329,6 +332,7 @@ export default async function PostPage({ params }: Props) {
               parentCat={parentCatProp}
               subCat={subCatProp}
               tags={p.tags ?? []}
+              post={p}
             />
             {relatedChart && relatedChart.length > 0 && (
               <div style={{ marginTop: 16 }}>

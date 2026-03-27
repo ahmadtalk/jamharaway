@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import type { NumbersConfig } from "@/lib/supabase/types";
+import type { NumbersConfig, PostWithRelations } from "@/lib/supabase/types";
 import { postUrl } from "@/lib/utils";
 import JCardShell from "@/components/shared/JCardShell";
+import ShareButton from "@/components/shared/ShareButton";
 
 interface Props {
   id: string;
@@ -22,6 +23,7 @@ interface Props {
   parentCat?: { name_ar: string; name_en: string; slug: string; color?: string };
   subCat?: { name_ar: string; name_en: string; slug: string };
   tags?: string[];
+  post?: PostWithRelations;
 }
 
 const PALETTE = ["#4CB36C", "#7B5EA7", "#E05A2B", "#2196F3", "#F59E0B", "#00BCD4"];
@@ -32,7 +34,7 @@ export default function NumbersCard({
   id, title, body, config,
   categoryName, categorySlug, categoryColor,
   likeCount, locale, timeAgoStr, isDetail,
-  parentCat, subCat, tags,
+  parentCat, subCat, tags, post,
 }: Props) {
   const isAr = locale === "ar";
   const [mounted, setMounted] = useState(false);
@@ -67,6 +69,13 @@ export default function NumbersCard({
       likeCount={likeCount}
       tags={tags}
     >
+      {/* زر المشاركة — يظهر فقط في صفحة التفاصيل */}
+      {isDetail && post && (
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>
+          <ShareButton post={post} locale={locale} isAr={locale === "ar"} />
+        </div>
+      )}
+
       {/* Body — moved to top (feed only) */}
       {!isDetail && body && body.replace(/<[^>]*>/g, "").trim() && (
         <p style={{ fontSize: ".82rem", color: "#5A5F7A", lineHeight: 1.7, marginBottom: 10, marginTop: 0 }}>

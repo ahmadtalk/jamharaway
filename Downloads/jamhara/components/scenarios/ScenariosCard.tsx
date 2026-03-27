@@ -1,7 +1,8 @@
 "use client";
 
-import type { ScenariosConfig, ScenarioTone } from "@/lib/supabase/types";
+import type { ScenariosConfig, ScenarioTone, PostWithRelations } from "@/lib/supabase/types";
 import JCardShell from "@/components/shared/JCardShell";
+import ShareButton from "@/components/shared/ShareButton";
 
 interface Props {
   id: string;
@@ -20,6 +21,7 @@ interface Props {
   parentCat?: { name_ar: string; name_en: string; slug: string; color?: string };
   subCat?: { name_ar: string; name_en: string; slug: string };
   tags?: string[];
+  post?: PostWithRelations;
 }
 
 const TONE_CONFIG: Record<ScenarioTone, {
@@ -39,7 +41,7 @@ export default function ScenariosCard({
   id, title, body, config,
   categoryName, categorySlug, categoryColor = "#0891B2",
   likeCount, locale, timeAgoStr, isDetail = false,
-  parentCat, subCat, tags,
+  parentCat, subCat, tags, post,
 }: Props) {
   const isAr = locale === "ar";
 
@@ -66,6 +68,13 @@ export default function ScenariosCard({
       likeCount={likeCount}
       tags={tags}
     >
+      {/* زر المشاركة — يظهر فقط في صفحة التفاصيل */}
+      {isDetail && post && (
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>
+          <ShareButton post={post} locale={locale} isAr={locale === "ar"} />
+        </div>
+      )}
+
       {/* Body — moved to top (feed only) */}
       {!isDetail && body && body.replace(/<[^>]*>/g, "").trim() && (
         <p style={{ fontSize: ".82rem", color: "#5A5F7A", lineHeight: 1.7, marginBottom: 12, marginTop: 0 }}>

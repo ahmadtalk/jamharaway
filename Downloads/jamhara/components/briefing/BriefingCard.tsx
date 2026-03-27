@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import type { BriefingConfig } from "@/lib/supabase/types";
+import type { BriefingConfig, PostWithRelations } from "@/lib/supabase/types";
 import { postUrl } from "@/lib/utils";
 import JCardShell from "@/components/shared/JCardShell";
+import ShareButton from "@/components/shared/ShareButton";
 
 interface Props {
   id: string;
@@ -21,6 +22,7 @@ interface Props {
   parentCat?: { name_ar: string; name_en: string; slug: string; color?: string };
   subCat?: { name_ar: string; name_en: string; slug: string };
   tags?: string[];
+  post?: PostWithRelations;
 }
 
 const FEED_LIMIT = 5;
@@ -30,7 +32,7 @@ export default function BriefingCard({
   id, title, body, config,
   categoryName, categorySlug, categoryColor,
   likeCount, locale, timeAgoStr, isDetail = false,
-  parentCat, subCat, tags,
+  parentCat, subCat, tags, post,
 }: Props) {
   const isAr = locale === "ar";
 
@@ -60,6 +62,13 @@ export default function BriefingCard({
       likeCount={likeCount}
       tags={tags}
     >
+      {/* زر المشاركة — يظهر فقط في صفحة التفاصيل */}
+      {isDetail && post && (
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>
+          <ShareButton post={post} locale={locale} isAr={locale === "ar"} />
+        </div>
+      )}
+
       {/* Body — top (feed only) */}
       {!isDetail && body && body.replace(/<[^>]*>/g, "").trim() && (
         <p style={{ fontSize: ".82rem", color: "#5A5F7A", lineHeight: 1.7, marginBottom: 12, marginTop: 0 }}>
