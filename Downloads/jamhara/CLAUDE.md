@@ -1302,6 +1302,29 @@ html-to-image (قديم):  يُحوّل DOM → PNG في المتصفح، يحت
 Puppeteer (جديد):      Chrome حقيقي على Railway يصوّر /share-preview/[id]، يدعم كل CSS + خطوط + RTL
 ```
 
+### جلسة مارس 2026 — المجموعة الرابعة عشرة (نظام مشاركة موحّد — بطاقة 1080×1350)
+
+**SharePreviewCard — بطاقة موحّدة لـ 19 نوع محتوى:**
+- [x] `components/shared/SharePreviewCard.tsx` — مكوّن جديد 1080×1350 (4:5 Instagram)
+  - هيدر (100px): شعار جمهرة + سلوغن "قيمة المرء ما يعرف" على خلفية `#F2FAF5` بحد أخضر 4px
+  - شريط التصنيف (50px): لون التصنيف + إيموجي + اسم التصنيف
+  - العنوان: 46px font-weight 900، max 3 سطور
+  - المحتوى (flex:1): 19 sub-component مخصص لكل نوع
+  - الفوتر (96px): `#373C55` + نص "اقرأ كاملاً في جمهرة" + `jamhara.com` بالأخضر
+  - ثنائي اللغة كامل (RTL/LTR) — inline styles للتوافق مع Puppeteer
+
+**حذف نظام html-to-image بالكامل:**
+- [x] حُذفت الملفات: `ShareButton.tsx`, `ShareCardModal.tsx`, `ShareCard.tsx`,
+  `ProfileShareCard.tsx`, `NewsShareCard.tsx`, `SharePreviewRenderer.tsx`,
+  `PuppeteerShareButton.tsx`, `app/api/image-proxy/route.ts`
+- [x] حُذفت imports/usage من جميع 19 card component
+
+**تحديثات المنظومة:**
+- [x] `app/api/share-image/route.ts` — حجم موحّد 1080×1350 (حذف SIZES object)
+- [x] `app/share-preview/[id]/page.tsx` — يستخدم `SharePreviewCard` مباشرة بدل `SharePreviewRenderer`
+- [x] `components/admin/PostsTableClient.tsx` — أزرار "معاينة" (رابط `/share-preview/[id]`) و"📸 صورة" (يستدعي `/api/share-image`) في كل صف
+- [x] `lib/share-card-data.ts` — `NewsShareData` interface محلياً (بعد حذف `NewsShareCard.tsx`)
+
 ### قيد الانتظار (مقترحات للمستقبل)
 - [ ] إعداد cron-job.org لـ /api/cron/fetch-news كل 15 دقيقة
 - [ ] إشعارات بريد عند فشل جدولة (Resend/SendGrid)
@@ -1412,6 +1435,7 @@ git reset --hard ae79f0e
 | `a4ebda5` | مارس 2026 | **المجموعة العاشرة** — SEO Tags (19 نوع) + Axios Smart Brevity + Share Card للأخبار |
 | `3f33b44` | مارس 2026 | **المجموعة الثانية عشرة** — ProfileShareCard + NewsShareCard مخصصتان + إصلاح العنوان |
 | `ec26334` | مارس 2026 | **المجموعة الثالثة عشرة** — Puppeteer على Railway + tags_en + NewsCard ثنائي اللغة |
+| `3bc11e1` | مارس 2026 | **المجموعة الرابعة عشرة** — نظام مشاركة موحّد: SharePreviewCard 1080×1350 + حذف html-to-image |
 
 ### محتوى `ae79f0e`
 - 18 نوع محتوى، 43 قالب، جميع الـ routes والمكونات
@@ -1431,4 +1455,4 @@ git reset --hard ae79f0e
 
 ---
 
-*آخر تحديث: مارس 2026 — المجموعة الثالثة عشرة: نظام Puppeteer على Railway (معزول) + tags_en (19 نوع) + NewsCard ثنائي اللغة + ProfileShareCard/NewsShareCard مع هيدر/فوتر موحّد*
+*آخر تحديث: مارس 2026 — المجموعة الرابعة عشرة: SharePreviewCard موحّد 1080×1350 لـ 19 نوع + حذف html-to-image كاملاً + أزرار معاينة/صورة في الأدمن*
