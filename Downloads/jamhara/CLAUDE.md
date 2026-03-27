@@ -1411,7 +1411,7 @@ git reset --hard ae79f0e
 | `a193e3c` | مارس 2026 | **المجموعة التاسعة** — ميزة الأخبار الكاملة (GNews + NewsCard + /news page) |
 | `a4ebda5` | مارس 2026 | **المجموعة العاشرة** — SEO Tags (19 نوع) + Axios Smart Brevity + Share Card للأخبار |
 | `3f33b44` | مارس 2026 | **المجموعة الثانية عشرة** — ProfileShareCard + NewsShareCard مخصصتان + إصلاح العنوان |
-| `HEAD`    | مارس 2026 | **المجموعة الثالثة عشرة** — Puppeteer على Railway + tags_en + NewsCard ثنائي اللغة |
+| `ec26334` | مارس 2026 | **المجموعة الثالثة عشرة** — Puppeteer على Railway + tags_en + NewsCard ثنائي اللغة |
 
 ### محتوى `ae79f0e`
 - 18 نوع محتوى، 43 قالب، جميع الـ routes والمكونات
