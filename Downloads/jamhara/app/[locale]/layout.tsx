@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function LocaleLayout({ children, params }: Props) {
   const { locale } = await params;
-  if (!routing.locales.includes(locale as "ar" | "en")) notFound();
+  if (!routing.locales.includes(locale as "ar")) notFound();
 
   const messages = await getMessages();
   const dir = locale === "ar" ? "rtl" : "ltr";
