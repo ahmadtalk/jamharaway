@@ -450,7 +450,7 @@ function createJamharaServer() {
       try {
         let q = supabase
           .from("posts")
-          .select("id, title_ar, title_en, type, published_at, view_count, tags, categories(name_ar, name_en, slug)")
+          .select("id, title_ar, title_en, type, published_at, view_count, tags, categories!category_id(name_ar, name_en, slug)")
           .eq("status", "published")
           .or(`title_ar.ilike.%${query}%,title_en.ilike.%${query}%,body_ar.ilike.%${query}%`)
           .order("published_at", { ascending: false })
@@ -496,7 +496,7 @@ function createJamharaServer() {
       try {
         const { data, error } = await supabase
           .from("posts")
-          .select("*, categories(name_ar, name_en, slug, color)")
+          .select("*, categories!category_id(name_ar, name_en, slug, color)")
           .eq("id", id)
           .eq("status", "published")
           .single();
@@ -525,7 +525,7 @@ function createJamharaServer() {
       try {
         let q = supabase
           .from("posts")
-          .select("id, title_ar, title_en, type, published_at, view_count, categories(name_ar, name_en, slug)")
+          .select("id, title_ar, title_en, type, published_at, view_count, categories!category_id(name_ar, name_en, slug)")
           .eq("status", "published")
           .order("published_at", { ascending: false })
           .limit(limit);
