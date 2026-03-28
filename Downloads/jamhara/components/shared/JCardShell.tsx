@@ -336,6 +336,22 @@ export default function JCardShell({
           </a>
         </div>
       ) : (
+      <>
+      {/* ── Tags (detail only) ───────────────────────────────────────── */}
+      {isDetail && (() => {
+        const displayTags = (!isAr && tags_en && tags_en.length > 0) ? tags_en : tags;
+        if (!displayTags || displayTags.length === 0) return null;
+        return (
+          <div className="jcard-tags">
+            {displayTags.map(tag => (
+              <Link key={tag} href={tagHref(tag, locale)} className="jcard-tag">
+                #{tag}
+              </Link>
+            ))}
+          </div>
+        );
+      })()}
+
       <div className="jcard-actions">
         {/* Like */}
         <button
@@ -470,22 +486,7 @@ export default function JCardShell({
           {isAr ? "دقق" : "Verify"}
         </button>
       </div>
-      )} {/* end isEmbed ternary */}
-
-      {/* ── Tags ─────────────────────────────────────────────────────── */}
-      {!isEmbed && (() => {
-        const displayTags = (!isAr && tags_en && tags_en.length > 0) ? tags_en : tags;
-        if (!displayTags || displayTags.length === 0) return null;
-        return (
-          <div className="jcard-tags">
-            {displayTags.map(tag => (
-              <Link key={tag} href={tagHref(tag, locale)} className="jcard-tag">
-                #{tag}
-              </Link>
-            ))}
-          </div>
-        );
-      })()}
+      </> )} {/* end isEmbed ternary */}
 
       {/* ── Verify / Flag modal ──────────────────────────────────────── */}
       {verifyOpen && (
