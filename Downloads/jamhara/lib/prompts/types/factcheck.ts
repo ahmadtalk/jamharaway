@@ -27,6 +27,7 @@ export function buildFactcheckPrompt({ topic, categorySlug }: FactcheckPromptPar
   "body_ar": "مقدمة التحقق 2-3 جمل نص عادي",
   "body_en": "Fact-check intro 2-3 sentences plain text",
   "tags": ["وسم1", "وسم2", "..."],
+  "tags_en": ["tag1", "tag2", ...],
   "content_config": {
     "claims": [
       {

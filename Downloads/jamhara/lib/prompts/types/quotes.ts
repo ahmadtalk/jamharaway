@@ -38,6 +38,7 @@ export function buildQuotesPrompt({ topic, categorySlug, useWebSearch = false }:
   "body_ar": "جملة مقدمة واحدة تُطار الموضوع",
   "body_en": "One intro sentence framing the topic",
   "tags": ["وسم1", "وسم2", "..."],
+  "tags_en": ["tag1", "tag2", ...],
   "content_config": {
     "topic_ar": "الموضوع بالعربية",
     "topic_en": "Topic in English",

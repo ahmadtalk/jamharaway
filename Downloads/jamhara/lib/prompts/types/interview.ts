@@ -29,6 +29,7 @@ export function buildInterviewPrompt({ topic, categoryName }: InterviewPromptPar
   "body_ar": "سياق المقابلة وأهميتها — 2-3 جمل",
   "body_en": "Interview context and importance — 2-3 sentences",
   "tags": ["وسم1", "وسم2", "..."],
+  "tags_en": ["tag1", "tag2", ...],
   "content_config": {
     "interviewee_ar": "اسم الشخصية",
     "interviewee_en": "Person Name",

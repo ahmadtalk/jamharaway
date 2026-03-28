@@ -345,7 +345,7 @@ export default function JCardShell({
           <div className="jcard-tags">
             {displayTags.map(tag => (
               <Link key={tag} href={tagHref(tag, locale)} className="jcard-tag">
-                #{tag}
+                {tag}
               </Link>
             ))}
           </div>

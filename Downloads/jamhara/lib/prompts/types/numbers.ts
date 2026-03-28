@@ -26,6 +26,7 @@ export function buildNumbersPrompt({ topic, categorySlug }: NumbersPromptParams)
   "body_ar": "سياق تحليلي 2-3 جمل نص عادي",
   "body_en": "Analytical context 2-3 sentences plain text",
   "tags": ["وسم1", "وسم2", ...],
+  "tags_en": ["tag1", "tag2", ...],
   "content_config": {
     "stats": [
       {

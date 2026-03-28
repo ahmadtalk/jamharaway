@@ -26,6 +26,7 @@ export function buildExplainerPrompt({ topic, categorySlug }: ExplainerPromptPar
   "body_ar": "جملة مقدمة واحدة توضح لماذا هذا الموضوع مهم",
   "body_en": "One intro sentence explaining why this topic matters",
   "tags": ["وسم1", "وسم2", "..."],
+  "tags_en": ["tag1", "tag2", ...],
   "content_config": {
     "intro_ar": "مقدمة موجزة للموضوع من جملتين",
     "intro_en": "Brief 2-sentence intro to the topic",

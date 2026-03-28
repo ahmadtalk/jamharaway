@@ -27,6 +27,7 @@ export function buildNetworkPrompt({ topic, categoryName }: NetworkPromptParams)
   "body_ar": "مقدمة موجزة تشرح طبيعة العلاقات وأهميتها — 2-3 جمل",
   "body_en": "Brief intro explaining the relationships — 2-3 sentences",
   "tags": ["وسم1", "وسم2", "..."],
+  "tags_en": ["tag1", "tag2", ...],
   "content_config": {
     "center_ar": "اسم الجهة المركزية",
     "center_en": "Central Entity Name",

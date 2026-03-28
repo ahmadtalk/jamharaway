@@ -26,6 +26,7 @@ export function buildDebatePrompt({ topic, categorySlug }: DebatePromptParams): 
   "body_ar": "جملة مقدمة واحدة تُطار القضية الخلافية",
   "body_en": "One intro sentence framing the controversy",
   "tags": ["وسم1", "وسم2", "..."],
+  "tags_en": ["tag1", "tag2", ...],
   "content_config": {
     "question_ar": "السؤال الجوهري للمناظرة",
     "question_en": "Core debate question in English",

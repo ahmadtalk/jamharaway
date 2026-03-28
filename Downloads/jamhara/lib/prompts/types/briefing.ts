@@ -26,6 +26,7 @@ export function buildBriefingPrompt({ topic, categorySlug }: BriefingPromptParam
   "body_ar": "مقدمة سياقية من 2-3 جمل نص عادي",
   "body_en": "2-3 sentence context plain text",
   "tags": ["وسم1", "وسم2", "..."],
+  "tags_en": ["tag1", "tag2", ...],
   "content_config": {
     "key_points": [
       {"text_ar": "نقطة رئيسية بالعربية", "text_en": "Key point in English", "icon": "emoji"}

@@ -28,6 +28,7 @@ export function buildRankingPrompt({ topic, categorySlug }: RankingPromptParams)
   "body_ar": "تحليل مختصر 2-3 جمل نص عادي",
   "body_en": "Short analysis 2-3 sentences plain text",
   "tags": ["وسم1", "وسم2", ...],
+  "tags_en": ["tag1", "tag2", ...],
   "content_config": {
     "metric_ar": "معيار التصنيف — مثال: الناتج المحلي الإجمالي",
     "metric_en": "Ranking metric — e.g. GDP",

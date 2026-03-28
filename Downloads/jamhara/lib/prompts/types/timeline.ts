@@ -26,6 +26,7 @@ export function buildTimelinePrompt({ topic, categorySlug }: TimelinePromptParam
   "body_ar": "وصف مختصر 2-3 جمل نص عادي",
   "body_en": "Short description 2-3 sentences plain text",
   "tags": ["وسم1", "وسم2", "..."],
+  "tags_en": ["tag1", "tag2", ...],
   "content_config": {
     "events": [
       {

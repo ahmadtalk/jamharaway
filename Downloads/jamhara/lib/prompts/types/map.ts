@@ -27,6 +27,7 @@ export function buildMapPrompt({ topic, categoryName }: MapPromptParams): string
   "body_ar": "مقدمة موجزة تشرح البيانات وأهميتها — 2-3 جمل",
   "body_en": "Brief intro explaining the data — 2-3 sentences",
   "tags": ["وسم1", "وسم2", "..."],
+  "tags_en": ["tag1", "tag2", ...],
   "content_config": {
     "topic_ar": "الموضوع الذي تُقارن فيه الدول",
     "topic_en": "The topic being compared across countries",

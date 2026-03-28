@@ -38,7 +38,8 @@ export function buildQuizPrompt({
 **ابحث أولاً** في الإنترنت عن أحدث المعلومات الموثوقة، ثم أنتج JSON فقط بدون markdown أو نص إضافي.
 
 الحقول العامة المطلوبة دائماً:
-{ "title_ar": "عنوان مثير بالعربية", "title_en": "Catchy title in English", "difficulty": "${difficultyEn}", "tags": ["وسم1", "وسم2", ...], "source": "اسم المصدر", "sourceUrl": "https://رابط-حقيقي-من-نتائج-البحث" }
+{ "title_ar": "عنوان مثير بالعربية", "title_en": "Catchy title in English", "difficulty": "${difficultyEn}", "tags": ["وسم1", "وسم2", ...],
+  "tags_en": ["tag1", "tag2", ...], "source": "اسم المصدر", "sourceUrl": "https://رابط-حقيقي-من-نتائج-البحث" }
 ${TAGS_INSTRUCTION}${SOURCE_INSTRUCTION}`;
 
   switch (quizType) {

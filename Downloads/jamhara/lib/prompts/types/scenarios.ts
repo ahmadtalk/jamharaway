@@ -31,6 +31,7 @@ export function buildScenariosPrompt({ topic, categorySlug }: ScenariosPromptPar
   "body_ar": "مقدمة تحليلية 2-3 جمل نص عادي",
   "body_en": "Analytical intro 2-3 sentences plain text",
   "tags": ["وسم1", "وسم2", "..."],
+  "tags_en": ["tag1", "tag2", ...],
   "content_config": {
     "question_ar": "ماذا سيحدث لـ...؟ صياغة واضحة",
     "question_en": "What will happen to...? Clear phrasing",

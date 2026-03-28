@@ -83,6 +83,7 @@ ${chartTypeInstruction}
   "body_ar": "تحليل من 4-6 جمل يشرح أبرز الاستنتاجات والاتجاهات والمفاجآت في البيانات",
   "body_en": "4-6 sentence analytical description in English",
   "tags": ["وسم1", "وسم2", ...],
+  "tags_en": ["tag1", "tag2", ...],
   "chart_config": {
     "chartType": "area|line|bar|pie|donut|scatter|radar|composed",
     "stats": [

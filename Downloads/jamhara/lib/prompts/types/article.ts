@@ -150,7 +150,8 @@ ${topicLine}${contextLine}${avoidSection}
   "sources": [
     { "name": "اسم المصدر كما يظهر في الموقع", "url": "https://رابط-حقيقي-من-بحثك-الفعلي" }
   ],
-  "tags": ["وسم1", "وسم2", ...]
+  "tags": ["وسم1", "وسم2", ...],
+  "tags_en": ["tag1", "tag2", ...]
 }
 ملاحظة sources: مصدر واحد على الأقل — 3 مصادر كحد أقصى — روابط حقيقية فقط.
 ${TAGS_INSTRUCTION}${SOURCE_INSTRUCTION}`;

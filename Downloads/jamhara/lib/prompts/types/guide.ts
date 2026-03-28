@@ -27,6 +27,7 @@ export function buildGuidePrompt({ topic, categoryName }: GuidePromptParams): st
   "body_ar": "مقدمة موجزة تشرح الهدف من الدليل — جملتان أو ثلاث",
   "body_en": "Brief intro explaining the guide goal — 2-3 sentences",
   "tags": ["وسم1", "وسم2", "..."],
+  "tags_en": ["tag1", "tag2", ...],
   "content_config": {
     "goal_ar": "ما ستتعلمه أو تحققه بعد اتباع هذه الخطوات",
     "goal_en": "What you will learn or achieve after following these steps",
